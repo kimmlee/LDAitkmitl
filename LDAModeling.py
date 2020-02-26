@@ -139,7 +139,7 @@ class LDAModeling:
     def localize_pyLDAvis_to_thai(self, en_input_dir, en_pyLDAvis_file, th_output_dir, th_pyLDAvis_file):
         with open(en_input_dir + en_pyLDAvis_file) as inf:
             txt = inf.read()
-            soup = bs4.BeautifulSoup(txt)
+            soup = bs4.BeautifulSoup(txt, features="lxml")
 
         meta = soup.new_tag("meta", charset="utf-8")
         soup.head.append(meta)
