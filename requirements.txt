@@ -11,3 +11,4 @@ JPype1==0.7.0
 pdfminer.six
 natsort
 bs4
+lxml

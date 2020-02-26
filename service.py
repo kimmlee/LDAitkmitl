@@ -6,15 +6,14 @@ import threading
 import functools
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-import urllib
-from service_helper import is_downloadable
 from service_helper import send_progress
-from service_helper import get_status_message
-import mimetypes
 import os
-import glob
 import time
-import re
+
+from pathlib import Path
+Path("./documents").mkdir(parents=True, exist_ok=True)
+Path("./converted").mkdir(parents=True, exist_ok=True)
+Path("./results").mkdir(parents=True, exist_ok=True)
 
 def run_model(connection, channel, delivery_tag, body):
     thread_id = threading.get_ident()
@@ -26,6 +25,7 @@ def run_model(connection, channel, delivery_tag, body):
 
     # make payload.id a string
     payload['id'] = str(payload['id'])
+    payload['max_no_topic'] = str(payload['max_no_topic'])
 
     # Prepare session to make requests
     session = requests.Session()
@@ -46,7 +46,7 @@ def run_model(connection, channel, delivery_tag, body):
         keep=True)
 
     print(" [D] Start Processing Queue-ID {} On Separate Thread".format(payload['id']))
-    process = subprocess.Popen(['python', 'main.py', payload['id'], payload['documents']], stdout=subprocess.PIPE, cwd="/app")
+    process = subprocess.Popen(['python', 'main.py', payload['id'], payload['documents'], payload['max_no_topic']], stdout=subprocess.PIPE, cwd="/app")
     for line in process.stdout:
         print(line.decode('utf-8').replace('\n', ''))
 
