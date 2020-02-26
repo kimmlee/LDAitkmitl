@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4efb39f7-6bea-499d-a7f5-f2b935089f49" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LDAModeling.py" beforeDir="false" afterPath="$PROJECT_DIR$/LDAModeling.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/json_request.json" beforeDir="false" afterPath="$PROJECT_DIR$/json_request.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/term_dist_topic" beforeDir="false" afterPath="$PROJECT_DIR$/term_dist_topic" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/topic_term_dist" beforeDir="false" afterPath="$PROJECT_DIR$/topic_term_dist" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -36,7 +31,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/TextDistribution.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1093">
@@ -48,7 +43,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="164">
+            <state relative-caret-position="342">
               <caret line="47" column="76" selection-start-line="47" selection-start-column="76" selection-end-line="47" selection-end-column="76" />
             </state>
           </provider>
@@ -63,11 +58,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/json_request.json">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="119">
-              <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+              <caret line="7" column="13" lean-forward="true" selection-start-line="7" selection-start-column="13" selection-end-line="23" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -106,8 +101,8 @@
       <find>document_dist_min</find>
       <find>ERROR cannot find the below file in a given path</find>
       <find>change</find>
-      <find>abs_file_paths</find>
       <find>pd.concat</find>
+      <find>abs_file_paths</find>
     </findStrings>
     <replaceStrings>
       <replace>'</replace>
@@ -331,7 +326,7 @@
       <workItem from="1580023058506" duration="47000" />
       <workItem from="1580023109993" duration="7515000" />
       <workItem from="1581925803241" duration="303000" />
-      <workItem from="1582000870833" duration="64743000" />
+      <workItem from="1582000870833" duration="64884000" />
     </task>
     <servers />
   </component>
@@ -368,7 +363,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="77581000" />
+    <option name="totallyTimeSpent" value="77722000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="5" y="0" width="1440" height="900" extended-state="6" />
@@ -527,20 +522,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="47" column="76" selection-start-line="47" selection-start-column="76" selection-end-line="47" selection-end-column="76" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/json_request.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Util.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="167">
@@ -562,6 +543,20 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1093">
           <caret line="105" column="25" selection-start-line="105" selection-start-column="8" selection-end-line="105" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="47" column="76" selection-start-line="47" selection-start-column="76" selection-end-line="47" selection-end-column="76" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/json_request.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="13" lean-forward="true" selection-start-line="7" selection-start-column="13" selection-end-line="23" selection-end-column="13" />
         </state>
       </provider>
     </entry>
