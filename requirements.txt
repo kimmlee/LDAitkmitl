@@ -4,6 +4,7 @@ pandas
 gensim
 tensorflow==1.14.0
 keras
+docx2txt
 deepcut
 pyldavis
 JPype1==0.7.0
