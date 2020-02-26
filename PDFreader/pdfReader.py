@@ -126,6 +126,7 @@ def dictionary_formatter(text):
     data = doc
     data.replace('เทำ','เท่า')
     return data
+
 def extract_pdf(fname,includeTable=True,layout=False):
     data = extract_text_from_pdf(fname)
     # print("->"+data)
