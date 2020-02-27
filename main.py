@@ -86,9 +86,11 @@ titles = [
             # 'โครงการศึกษาผลกระทบด้านขยะและน้ำเสียบริเวณพื้นที่เขตชายแดนบ้านคลองลึก อำเภออรัญประเทศ จังหวัดสระแก้ว    '
             ]
 
-
-with open('json_request.json', 'r') as f:
+with open('json_request_small.json', 'r') as f:
     request_dict = json.load(f)
+
+# with open('json_request.json', 'r') as f:
+#     request_dict = json.load(f)
 
 # print(json.dumps(request_dict, indent=4, sort_keys=True))
 
