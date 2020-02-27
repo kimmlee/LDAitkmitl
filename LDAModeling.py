@@ -12,6 +12,8 @@ from gensim.models import LsiModel, LdaModel, CoherenceModel
 import pandas as pd
 
 import bs4
+from service_helper import send_progress
+
 
 """An ensemble classifier that uses heterogeneous models at the base layer and a aggregation model at the 
     aggregation layer. A k-fold cross validation is used to generate training data for the stack layer model.
@@ -160,15 +162,21 @@ class LDAModeling:
         ldamodel = LdaModel(corpus, num_top, id2word=dictionary, decay=0.6, random_state=2, passes=10)
         return ldamodel
 
-    def perform_topic_modeling(self, input_local_root, files, titles, converted_local_root,
+    def perform_topic_modeling(self, id, input_local_root, files, titles, converted_local_root,
                                output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
                                max_no_topic = 10, is_short_words_removed = True):
 
         print("========== PART 1 : Input Files ==========")
-        data = Util.filter_file_to_read(input_local_root, files, converted_local_root)
+
+        send_progress(id=id, code="110", keep=True)
+
+        data = Util.filter_file_to_read(id, input_local_root, files, converted_local_root)
         num_doc = len(titles)
 
         print("========== PART 2 : Data Preparation and Creating Word Tokenization ==========")
+
+        send_progress(id=id, code="120", keep=True)
+
         # Set data into dataframe type
         data_df = self.to_dataframe(data, titles)
         data_df.head()
@@ -201,6 +209,7 @@ class LDAModeling:
 
         # Remove word is not noun and prop noun by pos_tag function
         for num in range(num_doc):
+            send_progress(id=id, code="121", payload=[num_doc])
             new_lists[num] = TextPreProcessing.postag(new_lists[num])
 
         # Create new dict and corpus
@@ -213,6 +222,8 @@ class LDAModeling:
 
         print("========== PART 3 : Generate LDA Model ==========")
         # Generate LDA Model
+
+        send_progress(id=id, code="140", keep=True)
 
         # Default number of topic is 10. If the number of documents is fewer than the maximum number of topics, the number of documents will be used to as the maximum number of topics.
         max_no_topic = min([max_no_topic, num_doc])
@@ -251,6 +262,9 @@ class LDAModeling:
         print(n_doc_intopic)
 
         print("========== PART 5 : Evaluate Model ==========")
+
+        send_progress(id=id, code="160", keep=True)
+
         # Evaluate
         lda_coherence = CoherenceModel(ldamodel, corpus=corpus2, dictionary=dictionary2, coherence='u_mass')
         print(lda_coherence.get_coherence_per_topic())
@@ -260,9 +274,13 @@ class LDAModeling:
         print("LDA uci score = %.4f" % (lda_coherence.get_coherence()))
 
         print("========== PART 6 : Export pyLDAvis HTML ==========")
+
+        send_progress(id=id, code="170", keep=True)
+
         # pyLDAvis.enable_notebook()
         vis = pyLDAvis.gensim.prepare(ldamodel, corpus2, dictionary=ldamodel.id2word)
         pyLDAvis.save_html(vis, output_dir + pyLDAvis_output_file)
 
         print("========== PART 7 : Convert pyLDAvis HTML to Thai==========")
+        send_progress(id=id, code="180", keep=True)
         self.localize_pyLDAvis_to_thai(output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file)

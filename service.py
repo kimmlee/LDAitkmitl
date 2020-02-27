@@ -4,8 +4,6 @@ import requests
 import ast
 import threading
 import functools
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
 from service_helper import send_progress
 import os
 import time
@@ -27,26 +25,41 @@ def run_model(connection, channel, delivery_tag, body):
     payload['id'] = str(payload['id'])
     payload['max_no_topic'] = str(payload['max_no_topic'])
 
-    # Prepare session to make requests
-    session = requests.Session()
+    '''
+    ==================================================================
+    PART A : Preparing a Directory
+    ==================================================================
+    '''
 
-    retry = Retry(connect=3, backoff_factor=0.5)
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount('http://', adapter)
+    send_progress(
+        id=payload['id'],
+        code="010",
+        keep=True)
+
+    if not os.path.exists('./documents/' + payload['id']):
+        os.mkdir("./documents/" + payload['id'])
+
+    if not os.path.exists('./converted/' + payload['id']):
+        os.mkdir("./converted/" + payload['id'])
 
     '''
     ==================================================================
-    PART A : Setting Up A Thread
+    PART B : Setting Up A Thread
     ==================================================================
     '''
     send_progress(
-        session=session,
         id=payload['id'],
         code="040",
         keep=True)
 
     print(" [D] Start Processing Queue-ID {} On Separate Thread".format(payload['id']))
-    process = subprocess.Popen(['python', 'main.py', payload['id'], payload['documents'], payload['max_no_topic']], stdout=subprocess.PIPE, cwd="/app")
+    process = subprocess.Popen([
+        'python',
+        'main.py',
+        payload['id'],
+        payload['projectId'],
+        payload['documents'],
+        payload['max_no_topic']], stdout=subprocess.PIPE, cwd="/app")
     for line in process.stdout:
         print(line.decode('utf-8').replace('\n', ''))
 
@@ -106,7 +119,7 @@ while True:
 
         callback_hook = functools.partial(callback, args=(connection, threads))
         channel = connection.channel()
-        channel.basic_qos(prefetch_count=3)
+        channel.basic_qos(prefetch_count=2)
         channel.basic_consume(queue="processing.requests", on_message_callback=callback_hook)
         channel.start_consuming()
 

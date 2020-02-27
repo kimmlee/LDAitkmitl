@@ -4,6 +4,7 @@ from pdfminer.pdfparser import PDFSyntaxError
 import docx2txt
 import subprocess
 import shlex
+from service_helper import send_progress
 
 # This package is for parsing a file name
 import ntpath
@@ -42,7 +43,7 @@ class Util:
         }
     """
     @staticmethod
-    def read_file(local_path, files, converted_local_root):
+    def read_file(id, local_path, files, converted_local_root):
         # create a dictionary, in which a key is a file name and a value is a document text (raw text.)
         data = {}
         # Read all given files in docx or readable pdf (readable means such a pdf file must be able to be read by pdfminer.)
@@ -50,6 +51,7 @@ class Util:
             data_file_text = ""
             file_path = local_path + file
             try:
+                send_progress(id=id, code="111", payload=[file_path])
                 f_list = re.split("; |/|\\.", file_path)
                 if file_path.endswith('.pdf'):
                     data_file_text = pdfReader.extract_pdf(file_path)
@@ -61,6 +63,9 @@ class Util:
             except PDFSyntaxError as err:
                 print('=======This file, {0}, is unreadable======='.format(file_path))
                 print('Converting pdf by ghostscirpt')
+
+                send_progress(id=id, code="022", payload=[file_path])
+
                 conv_file_path = converted_local_root + 'conv-' + Util.path_leaf(file_path)
                 print(conv_file_path)
                 if not os.path.isfile(conv_file_path):
@@ -70,12 +75,14 @@ class Util:
                     print("This file, {0}, already exists and has previously been converted by ghostscript. So, it will not be converted again.".format(conv_file_path))
 
                 try:
-                    data_file_text = pdfReader.extract_pdf(conv_file_path)
 
+                    data_file_text = pdfReader.extract_pdf(conv_file_path)
+                    send_progress(id=id, code="111", payload=[file_path])
                     # Add document text in a dictionary
                     data[f_list[-2]] = [str(data_file_text)]
                 except Exception as inst:
                     print('Exception message: {0}'.format(inst))
+                    send_progress(id=id, code="510", payload=[conv_file_path])
             except:
                 print("=======ERROR cannot find the below file in a given path=======")
                 print(file_path, f_list)
@@ -124,7 +131,7 @@ class Util:
         }
     """
     @staticmethod
-    def filter_file_to_read(local_path, files, converted_local_root):
+    def filter_file_to_read(id, local_path, files, converted_local_root):
 
         # Find all files in a given input path and list absolute paths to them in the variable files
         to_read_files = []
@@ -139,7 +146,7 @@ class Util:
                 print(
                     '-- Only pdf and docx formats are supported. This file will be ignored due to not support types: \"{0}\". --'.format(
                         file))
-        data = Util.read_file(local_path, to_read_files, converted_local_root)
+        data = Util.read_file(id, local_path, to_read_files, converted_local_root)
         return data
 
     """

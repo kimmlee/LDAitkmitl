@@ -1,6 +1,13 @@
-import requests
 import os
 import time
+import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+
+session = requests.Session()
+retry = Retry(connect=3, backoff_factor=0.5)
+adapter = HTTPAdapter(max_retries=retry)
+session.mount('http://', adapter)
 
 def is_downloadable(url):
     """
@@ -19,7 +26,7 @@ def is_downloadable(url):
         return False
 
 
-def send_progress(session, id, code, payload=None, keep=False, files=None):
+def send_progress(id, code, payload=None, keep=False, files=None):
     progress_payload = {'id': id, 'code': code, 'keep': keep}
 
     if "EXPRESS_HOST" in os.environ:
@@ -32,7 +39,6 @@ def send_progress(session, id, code, payload=None, keep=False, files=None):
     else:
         progress_payload['payload'] = ['']
 
-    
     sent = False
     while not sent:
         try:
@@ -46,14 +52,13 @@ def send_progress(session, id, code, payload=None, keep=False, files=None):
             time.sleep(3)
 
 
-
-
 def get_status_message(status_code):
     statuses = {
         '010': "preparing request's directory",
         '011': "preparing document{}",
         '020': "downloading request's resources",
         '021': "{} is being downloaded",
+        '022': "{} is being converted",
         '030': "converting request's resources",
         '040': "threading",
         '050': "end thread",
@@ -68,6 +73,9 @@ def get_status_message(status_code):
         '130': "creating bag of words",
         '140': "modeling",
         '150': "cleaning environment",
+        '160': "evaluating model",
+        '170': 'exporting to html format',
+        '180': 'converting exported html to Thai',
 
         '410': "{} is not downloadable",
 
