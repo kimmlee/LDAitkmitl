@@ -288,6 +288,7 @@ class LDAModeling:
         # term_pair_sim = []
         # term_pair_sim = self.compute_term_pairs(topic_term_dist)
         # print(term_pair_sim)
+        term_pair_sim =None
 
         print("========== PART 4-1 : Document-topic (all) distribution ==========")
         ### Doc_topic_all_dist
