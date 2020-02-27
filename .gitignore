@@ -1,2 +1,5 @@
 FinalReport_Sample/*
 TestDownloadFiles/*
+__pycache__/*
+PDFreader/__pycache__/*
+jpype/__pycache__/*

@@ -45,7 +45,7 @@ class TextDistribution:
             for term in term_list:
                 term_name = term['term']
                 term_score = term['score']
-                if term_name in ['คิมม',"มนน","แซมม"]:
+                if term_name in ["คิมม","มนน","แซมม"]:
                     new_term_score = term_score
                 else:
                     term_id = dic[term_name]

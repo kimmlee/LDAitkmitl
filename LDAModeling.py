@@ -266,3 +266,13 @@ class LDAModeling:
 
         print("========== PART 7 : Convert pyLDAvis HTML to Thai==========")
         self.localize_pyLDAvis_to_thai(output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file)
+
+        result = {
+            "projectid":None,
+            "topic_chart_url": output_dir + pyLDAvis_output_file,
+            "term_topic_matrix":topic_term_dist,
+            "document_topic_matrix":doc_topic_dist,
+            "topic_stat":n_doc_intopic,
+            "term_pair_sim":None
+        }
+        return result
