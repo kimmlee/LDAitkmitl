@@ -119,8 +119,7 @@ for doc_id, document in documents.items():
             urllib.request.urlretrieve(url, abs_file_path)
         except:
             print('An exception occurred when downloading a file from this url, \"{0}\"'.format(url))
-            # Delete this document that cannot be downloaded at a specific index.
-            del documents[doc_id]
+            # Record this document that cannot be downloaded in an error list.
             error_doc_ids.append(doc_id)
     else:
         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
@@ -142,7 +141,6 @@ ldamodeling.perform_topic_modeling(input_local_root, to_process_files, to_proces
 #
 # print('========== Beginning file download with urllib2. ==========')
 # to_process_files = []
-# abs_file_paths = []
 # counter = 0
 # #print(len(urls), len(titles))
 # for url in urls:
@@ -158,10 +156,8 @@ ldamodeling.perform_topic_modeling(input_local_root, to_process_files, to_proces
 #         except:
 #             print('An exception occurred when downloading a file from this url, \"{0}\"'.format(url))
 #             # Delete the title of a file that cannot be downloaded at a specific index.
-#             # This is to keep two lists of abs_file_paths and titles consistent.
-#
+#             # This is to keep two lists of to_process_files and titles consistent.
 #             del titles[counter]
-#
 #     else:
 #         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
 #     to_process_files.append(file)

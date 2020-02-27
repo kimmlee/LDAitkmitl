@@ -18,8 +18,6 @@ import os
         3) filter_file_to_read()
         4) path_leaf()
 """
-
-
 class Util:
     """
         This class has not either instance or static attributes
