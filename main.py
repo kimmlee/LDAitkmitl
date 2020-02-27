@@ -111,7 +111,6 @@ ldamodeling.perform_topic_modeling(request['id'], input_local_root, to_process_f
                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
                                    request['max_no_topic'])
 
-
 # max_no_topic = 10
 #
 # print('========== Beginning file download with urllib2. ==========')

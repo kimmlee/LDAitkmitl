@@ -51,7 +51,7 @@ class Util:
             data_file_text = ""
             file_path = local_path + file
             try:
-                send_progress(id=id, code="111", payload=[file_path])
+                send_progress(id=id, code="111", payload=[file_path.split("/")[-1]])
                 f_list = re.split("; |/|\\.", file_path)
                 if file_path.endswith('.pdf'):
                     data_file_text = pdfReader.extract_pdf(file_path)
@@ -64,7 +64,7 @@ class Util:
                 print('=======This file, {0}, is unreadable======='.format(file_path))
                 print('Converting pdf by ghostscirpt')
 
-                send_progress(id=id, code="022", payload=[file_path])
+                send_progress(id=id, code="022", payload=[file_path.split("/")[-1]])
 
                 conv_file_path = converted_local_root + 'conv-' + Util.path_leaf(file_path)
                 print(conv_file_path)
@@ -77,12 +77,12 @@ class Util:
                 try:
 
                     data_file_text = pdfReader.extract_pdf(conv_file_path)
-                    send_progress(id=id, code="111", payload=[file_path])
+                    send_progress(id=id, code="111", payload=[file_path.split("/")[-1]])
                     # Add document text in a dictionary
                     data[f_list[-2]] = [str(data_file_text)]
                 except Exception as inst:
                     print('Exception message: {0}'.format(inst))
-                    send_progress(id=id, code="510", payload=[conv_file_path])
+                    send_progress(id=id, code="510", payload=[conv_file_path.split("/")[-1]])
             except:
                 print("=======ERROR cannot find the below file in a given path=======")
                 print(file_path, f_list)

@@ -284,3 +284,13 @@ class LDAModeling:
         print("========== PART 7 : Convert pyLDAvis HTML to Thai==========")
         send_progress(id=id, code="180", keep=True)
         self.localize_pyLDAvis_to_thai(output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file)
+
+        en_output_file = {
+            'file': (pyLDAvis_output_file, open('./results/' + pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'})
+        }
+        th_output_file = {
+            'file': (th_pyLDAvis_output_file, open('./results/' + th_pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'})
+        }
+
+        send_progress(id=id, code="050", keep=True, files=en_output_file)
+        send_progress(id=id, code="050", keep=True, files=th_output_file)
