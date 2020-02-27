@@ -8,13 +8,13 @@ import urllib.request
 import json
 import ast
 
-headless = True
+headless = False
 
 if headless:
     with open('json_request.json', 'r') as f:
         request = json.load(f)
 else:
-    request = {'id': sys.argv[1], 'documents': ast.literal_eval(sys.argv[2]), 'max_no_topic': int(sys.argv[2])}
+    request = {'id': sys.argv[1], 'documents': ast.literal_eval(sys.argv[2]), 'max_no_topic': int(sys.argv[3])}
 
 """
     1) download all files from a list of URLs and save to local (API server)

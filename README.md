@@ -1,20 +1,15 @@
-# LDAitkmitl
+# Dockerized LDAitkmitl
+> Work as a part of Queueing System
 
-1. pip install -r requirements.txt
+**This version of code is meant to be run inside Docker environment with other services by using _docker-compose_**
 
-2. You don't have to pip install pylexto, just MOVE "pylexto" and "jpype" folders in your ../anaconda3/lib/python3.7/site-packages/ (before RUN main.py, pls delete these folders)
+## How to Run In Headless Mode
+In case of debugging without other services. Follow these steps below
 
-3. RUN python main.py
-
-
-<b>If you got an error: marisa-trie/include/marisa/stdio.h:4:10: fatal error: 'cstdio' file not found</b>
-
-* For Mac Mojave
-
-1. Install a command line tool by running the following command in terminal: open /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg
-
-https://stackoverflow.com/questions/52509602/cant-compile-c-program-on-a-mac-after-upgrade-to-mojave
-
-2. Add CPATH for gcc environment by running the following command in terminal or adding it to the bash_profile: export CPATH=/Library/Developer/CommandLineTools/usr/include/c++/v1
-
-https://github.com/pytries/marisa-trie/issues/50
+1. Make sure that you've Docker installed on your machine. You can [download it here](https://www.docker.com).
+2. Build an image from Dockerfile. This is a one-time step. (This will take a while)
+```shell script
+docker build -t queueing-worker .
+```
+3. You can config the request body to send by editing [json_request.json](json_request.json).
+4. 
