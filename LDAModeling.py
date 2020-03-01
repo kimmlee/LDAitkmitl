@@ -345,13 +345,13 @@ class LDAModeling:
         self.localize_pyLDAvis_to_thai(output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file)
 
         result = {
-            "projectid":None,
-            "topic_chart_url": output_dir + pyLDAvis_output_file,
-            "term_topic_matrix":topic_term_dist,
-            "document_topic_matrix":doc_topic_dist,
-            "topic_stat":n_doc_intopic,
-            "term_pair_sim":term_pair_sim
+            "projectId": None,
+            # "topic_chart_url": output_dir + pyLDAvis_output_file,
+            "term_topic_matrix": topic_term_dist,
+            "document_topic_matrix": doc_topic_dist,
+            "topic_stat": n_doc_intopic,
+            "term_pair_sim": term_pair_sim
         }
 
-        send_progress(id=id, code="050", keep=True, files=output_files)
+        send_progress(id=id, code="050", data=result, keep=True, files=output_files)
         # return result

@@ -27,7 +27,7 @@ def is_downloadable(url):
         return False
 
 
-def send_progress(id, code, payload=None, keep=False, files=None):
+def send_progress(id, code, payload=None, keep=False, data=None, files=None):
     progress_payload = {'id': id, 'code': code, 'keep': keep}
 
     if "EXPRESS_HOST" in os.environ:
@@ -40,13 +40,16 @@ def send_progress(id, code, payload=None, keep=False, files=None):
     else:
         progress_payload['payload'] = ['']
 
+    if data is not None:
+        progress_payload['data'] = data
+
     sent = False
     while not sent:
         try:
             if files is None:
                 r = session.post(api_url, progress_payload)
             else:
-                r = session.post(api_url, progress_payload, files=files)
+                r = session.post(api_url, json=progress_payload, files=files)
             sent = True
         except Exception as error:
             print(" [Worker->API] Trying to send ...")
