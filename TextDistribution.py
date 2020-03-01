@@ -42,9 +42,7 @@ class TextDistribution:
             term_list = topic['terms']
             new_term_list = []
             # print(term_list)
-            rank = 0 
             for term in term_list:
-                rank += 1
                 term_name = term['term']
                 term_score = term['score']
                 if term_name in ["คิมม","มนน","แซมม"]:
