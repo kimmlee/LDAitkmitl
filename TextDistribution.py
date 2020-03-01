@@ -42,9 +42,9 @@ class TextDistribution:
             term_list = topic['terms']
             new_term_list = []
             # print(term_list)
-            ranking = 0 
+            rank = 0 
             for term in term_list:
-                ranking += 1
+                rank += 1
                 term_name = term['term']
                 term_score = term['score']
                 if term_name in ["คิมม","มนน","แซมม"]:
@@ -55,7 +55,6 @@ class TextDistribution:
                     prob_w_t = term_score
                     new_term_score = (_lambda * prob_w_t) + ((1 - _lambda)*(prob_w_t/prob_w))
                 new_term = {
-                    "rank":ranking,
                     "term":term_name,
                     "score":new_term_score
                 }
