@@ -13,6 +13,8 @@ import pandas as pd
 
 import bs4
 
+from operator import attrgetter
+
 """An ensemble classifier that uses heterogeneous models at the base layer and a aggregation model at the 
     aggregation layer. A k-fold cross validation is used to generate training data for the stack layer model.
 
@@ -116,6 +118,7 @@ class LDAModeling:
 
     def __init__(self):
         self.num_cut = 2
+        self.no_top_terms = 20
 
     def to_dataframe(self, data, titles):
         """
@@ -136,13 +139,17 @@ class LDAModeling:
         data_df = pd.DataFrame.from_dict(data_df_dict)
         return data_df
 
-    def localize_pyLDAvis_to_thai(self, en_input_dir, en_pyLDAvis_file, th_output_dir, th_pyLDAvis_file):
+    def localize_pyLDAvis_to_thai(self, project_name, en_input_dir, en_pyLDAvis_file, th_output_dir, th_pyLDAvis_file):
         with open(en_input_dir + en_pyLDAvis_file) as inf:
             txt = inf.read()
             soup = bs4.BeautifulSoup(txt, features="lxml")
 
         meta = soup.new_tag("meta", charset="utf-8")
         soup.head.append(meta)
+
+        new_title_tag = soup.new_tag("title")
+        new_title_tag.string = project_name
+        soup.head.append(new_title_tag)
 
         souptemp = soup.prettify()
         souptemp = souptemp.replace('https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js', 'static/js/d3.min.js')
@@ -153,51 +160,6 @@ class LDAModeling:
         with open(th_output_dir + th_pyLDAvis_file, "w") as outf:
             outf.write(souptemp)
 
-            
-    """
-        This method computes the co-occurence of word pais across different topics. Each word in a pair must be from different topics.
-        
-        Param:
-        
-            “term_topic_matrix”: {
-                "topic_id":0,
-                terms
-                “1”: { <<- key = topic no
-                    “1”: { <<- key = rank no
-                        “word”: “xxx”,
-                        “score”: 0.9
-                    },
-                    “2”: {
-                        “word”: “yyy”,
-                        “score”: 0.8
-                    },
-                    …
-            }
-	
-
-        
-        Return:
-        
-        Example 
-            “term_pair_sim”: {
-                “1”: { <<- key = ranking
-                    “word1”: “xxx”,
-                    “word2”: “yyy”,
-                    “score”: 0.9
-            },
-         
-    """
-    def compute_term_pairs(self, topic_term_dist):
-        term_pair_sim = ''
-
-        print(topic_term_dist)
-        # for topic_id, ranked_terms in topic_term_dist.items():
-        #     print("topic id: {0}".format(topic_id))
-        #     for rank, term_score in ranked_terms.items():
-        #         print("Rank: {0}, Term: {1}, Score: {2}".format(rank, term_score('word'), term_score('score')))
-        return term_pair_sim
-
-
 
     """to remove"""
     # Generate LDA Model
@@ -205,12 +167,12 @@ class LDAModeling:
         ldamodel = LdaModel(corpus, num_top, id2word=dictionary, decay=0.6, random_state=2, passes=10)
         return ldamodel
 
-    def perform_topic_modeling(self, input_local_root, files, titles, converted_local_root,
+    def perform_topic_modeling(self, project_name, input_local_root, files, titles, converted_local_root,
                                output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
                                max_no_topic = 10, is_short_words_removed = True):
 
         print("========== PART 1 : Input Files ==========")
-        data = Util.filter_file_to_read(input_local_root, files, converted_local_root)
+        data, unreadable_docs = Util.filter_file_to_read(input_local_root, files, converted_local_root)
         num_doc = len(titles)
 
         print("========== PART 2 : Data Preparation and Creating Word Tokenization ==========")
@@ -267,10 +229,10 @@ class LDAModeling:
         ldamodel = self.LDAmodel(dictionary2, corpus2, max_no_topic)
         term_dist_topic = ldamodel.show_topics(max_no_topic, 1000, log=True, formatted=False)
         # print(term_dist_topic)
-        handle1=open('term_dist_topic','a+')
-        handle1.write(str(term_dist_topic))
-        handle1.write("\n")
-        handle1.close()
+        # handle1=open('term_dist_topic','a+')
+        # handle1.write(str(term_dist_topic))
+        # handle1.write("\n")
+        # handle1.close()
 
         print("========== PART 4 : Topic-term distribution ==========")
         ### Topic-Term Dist
@@ -279,16 +241,10 @@ class LDAModeling:
         # print(dictionary2)
         topic_term_dist = TextDistribution.topicTerm_dist(dict_2,corpus2,topic_term_dist, term_dist_topic)
         print(topic_term_dist)
-        handle1=open('topic_term_dist','a+')
-        handle1.write(str(topic_term_dist))
-        handle1.write("\n")
-        handle1.close()
-
-        # print("========== PART 8 : Word/Term Pair Similairty==========")
-        # term_pair_sim = []
-        # term_pair_sim = self.compute_term_pairs(topic_term_dist)
-        # print(term_pair_sim)
-        term_pair_sim =None
+        # handle1=open('topic_term_dist','a+')
+        # handle1.write(str(topic_term_dist))
+        # handle1.write("\n")
+        # handle1.close()
 
         print("========== PART 4-1 : Document-topic (all) distribution ==========")
         ### Doc_topic_all_dist
@@ -317,14 +273,19 @@ class LDAModeling:
         pyLDAvis.save_html(vis, output_dir + pyLDAvis_output_file)
 
         print("========== PART 7 : Convert pyLDAvis HTML to Thai==========")
-        self.localize_pyLDAvis_to_thai(output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file)
+        self.localize_pyLDAvis_to_thai(project_name, output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file)
+
+        print("========== PART 8 : Word/Term Pair Similairty==========")
+        terms_pairs = TextDistribution.compute_term_pairs(topic_term_dist, self.no_top_terms)
+        print(terms_pairs)
 
         result = {
-            "projectid":None,
+            "project_id":None,
             "topic_chart_url": output_dir + pyLDAvis_output_file,
             "term_topic_matrix":topic_term_dist,
             "document_topic_matrix":doc_topic_dist,
             "topic_stat":n_doc_intopic,
-            "term_pair_sim":term_pair_sim
+            "term_pairs":terms_pairs,
+            "unreadable_documents":unreadable_docs
         }
         return result
