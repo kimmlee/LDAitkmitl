@@ -7,13 +7,31 @@ from nltk.stem.porter import PorterStemmer
 import string
 import pandas
 import re
-
+"""
+    A TextPreProcessing class is a preprocessing text in document file of methods to handles spliting words to create word token, removing unwanted words and 
+    increasing frequency of word before putting it to LDAmodel. 
+    This class contains 4 static methods, including: 
+        1) split_word()
+        2) cut_character()
+        3) postag()
+        4) add_frequency()
+"""
 class TextPreProcessing:
+    
 
     @staticmethod
     def split_word(text):
         """
-        Split word to token and Remove stop word
+        A static method, split_word(text), splits word by newmm word tokenize which method of pythainlp, cleans special character and removes stop word
+        
+        Parameters
+        ----------
+        text: a content of each document file in a string format, required
+            
+        Returns
+        ----------
+        tokens: a list contains preprocessing string word from a document text (raw text.)
+            ['บ้าน','เปร็ด','โรงพยาบาล',...]
         """
         train_text = ""
         #Remove special charecter
@@ -37,8 +55,29 @@ class TextPreProcessing:
     @staticmethod
     def cut_character(inp_list, num_cut):
         """
-        Remove words with the number of characters that is fewer than or equal to 'num_cut=2'
-        Example if num_cut is 2, word like คน, สน, จน will be removed
+        A static method, cut_character(inp_list, num_cut), removes word token which is equal or fewer than defined the number of characters.
+        
+        Parameters
+        ----------
+        inp_list: a list of all document's token list, just like
+        Example.
+        [
+            ['สน','สายหยุด','ดอกไม้',...],
+            ['คน','ประเทศไทย','ใส่ใจ',...],
+            ['จน','พัฒนา','ศักยภาพ',...]
+        ]
+        num_cut: the number of character that you want to cut it off from token
+        Example.
+         if num_cut is 2, word like คน, สน, จน will be removed
+            
+        Returns
+        ----------
+        new_lists: a new list of inp_list which removed word that equal or fewer than defined number of character.
+        [
+            ['สายหยุด','ดอกไม้',...],
+            ['ประเทศไทย','ใส่ใจ',...],
+            ['พัฒนา','ศักยภาพ',...]
+        ]
         """
 
         count = 0
@@ -71,7 +110,20 @@ class TextPreProcessing:
     @staticmethod
     def postag(words_list):
         """
-        Remove word is not noun and prop noun by pos_tag function
+        A static method, postag(words_list), removes word is not noun and prop noun by Pythainlp's pos_tag function.
+        
+        Parameters
+        ----------
+        words_list: a list of all document's token list.
+            
+        Returns
+        ----------
+        pos_list: a new list of words_list which removed word is not noun and prop noun.
+        [
+            ['สายหยุด','ดอกไม้',...],
+            ['ประเทศไทย','ใส่ใจ',...],
+            ['พัฒนา','ศักยภาพ',...]
+        ]
         """
 
         word_with_pos = pos_tag(words_list)
@@ -83,6 +135,32 @@ class TextPreProcessing:
 
     @staticmethod
     def add_frequency(dict_2, corpus, data_df, freq_multiply, num_doc):
+        """
+        A static method, postag(words_list), increases frequency of words which are title of document.
+        
+        Parameters
+        ----------
+        dict_2: a dictionary of word token (key) and word token id (value) which collected all document's token list.
+        corpus: list of all document's frequency word token tuple in dictionary which contains word_token_id and frequency_of_word_token.
+        data_df: DataFrame is a 2-dimensional labeled data structure with columns of potentially different types 
+                 which contains document id (doc_id), title and content of each document.
+        freq_multiply: the number multiplied by the frequency.
+        num_doc: the number of documents input.
+            
+        Returns
+        ----------
+        corpus: a new corpus that multiplied frequency of document's title with defined number.
+        [
+            [
+                (0, 1),
+                (1, 2),
+                (2, 1),
+                (3, 1),
+                ...
+            ]
+        ]
+        """
+
         title_list = []
         for num in range(num_doc):
             title = data_df['title'][num]
