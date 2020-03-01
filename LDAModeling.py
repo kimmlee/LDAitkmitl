@@ -152,7 +152,7 @@ class LDAModeling:
 
         with open(th_output_dir + th_pyLDAvis_file, "w") as outf:
             outf.write(souptemp)
-
+            
             
     """
         This method computes the co-occurence of word pais across different topics. Each word in a pair must be from different topics.
@@ -205,7 +205,7 @@ class LDAModeling:
         ldamodel = LdaModel(corpus, num_top, id2word=dictionary, decay=0.6, random_state=2, passes=10)
         return ldamodel
 
-    def perform_topic_modeling(self, input_local_root, files, titles, converted_local_root,
+    def perform_topic_modeling(self, project_name, input_local_root, files, titles, converted_local_root,
                                output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
                                max_no_topic = 10, is_short_words_removed = True):
 
@@ -288,7 +288,6 @@ class LDAModeling:
         # term_pair_sim = []
         # term_pair_sim = self.compute_term_pairs(topic_term_dist)
         # print(term_pair_sim)
-        term_pair_sim =None
 
         print("========== PART 4-1 : Document-topic (all) distribution ==========")
         ### Doc_topic_all_dist
@@ -325,6 +324,6 @@ class LDAModeling:
             "term_topic_matrix":topic_term_dist,
             "document_topic_matrix":doc_topic_dist,
             "topic_stat":n_doc_intopic,
-            "term_pair_sim":term_pair_sim
+            "term_pair_sim":None
         }
         return result
