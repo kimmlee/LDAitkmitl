@@ -57,10 +57,13 @@ class TextDistribution:
                     "score":new_term_score
                 }
                 new_term_list.append(new_term)
+            new_term_list = sorted(new_term_list, key=lambda i: i['score'], reverse=True)
+            print(new_term_list)  
             topic_term = {"topic_id":topic['topic_id'],
                         "terms":new_term_list}
             topic_term_dist_6.append(topic_term)
-            
+
+         
         return topic_term_dist_6
 
     @staticmethod
