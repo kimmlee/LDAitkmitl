@@ -2,8 +2,7 @@ import sys
 sys.path.append("..") # Adds higher directory to python modules path.
 
 from Util import Util
-#from LDAModeling import LDAModeling
-from LDAModeling_v2 import LDAModeling
+from LDAModeling import LDAModeling
 
 import os
 # This package is for downloading pdf
@@ -121,6 +120,10 @@ for doc_id, document in documents.items():
         try:
             print('downloading file from this url: \"{0}\" with this file name : \"{1}\".'.format(url, file))
             urllib.request.urlretrieve(url, abs_file_path)
+
+            to_process_files.append(file)
+            to_process_titles.append(document['title'])
+            counter += 1
         except:
             print('An exception occurred when downloading a file from this url, \"{0}\"'.format(url))
             # Record this document that cannot be downloaded in an error list.
@@ -128,9 +131,9 @@ for doc_id, document in documents.items():
     else:
         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
 
-    to_process_files.append(file)
-    to_process_titles.append(document['title'])
-    counter += 1
+        to_process_files.append(file)
+        to_process_titles.append(document['title'])
+        counter += 1
 
 # print('========================')
 # print(documents)
