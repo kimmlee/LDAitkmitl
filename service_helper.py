@@ -9,6 +9,7 @@ retry = Retry(connect=3, backoff_factor=0.5)
 adapter = HTTPAdapter(max_retries=retry)
 session.mount('http://', adapter)
 
+
 def is_downloadable(url):
     """
     Does the url contain a downloadable resource
@@ -47,8 +48,9 @@ def send_progress(id, code, payload=None, keep=False, files=None):
             else:
                 r = session.post(api_url, progress_payload, files=files)
             sent = True
-        except:
+        except Exception as error:
             print(" [Worker->API] Trying to send ...")
+            print(error)
             time.sleep(3)
 
 
@@ -61,7 +63,7 @@ def get_status_message(status_code):
         '022': "{} is being converted",
         '030': "converting request's resources",
         '040': "threading",
-        '050': "end thread",
+        '050': "complete exporting file in {} language",
 
         '110': "input dataset",
         '111': "input dataset from {}",

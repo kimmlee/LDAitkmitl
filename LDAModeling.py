@@ -209,7 +209,7 @@ class LDAModeling:
 
         # Remove word is not noun and prop noun by pos_tag function
         for num in range(num_doc):
-            send_progress(id=id, code="121", payload=[num_doc])
+            send_progress(id=id, code="121", payload=[num+1])
             new_lists[num] = TextPreProcessing.postag(new_lists[num])
 
         # Create new dict and corpus
@@ -285,12 +285,9 @@ class LDAModeling:
         send_progress(id=id, code="180", keep=True)
         self.localize_pyLDAvis_to_thai(output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file)
 
-        en_output_file = {
-            'file': (pyLDAvis_output_file, open('./results/' + pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'})
-        }
-        th_output_file = {
-            'file': (th_pyLDAvis_output_file, open('./results/' + th_pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'})
-        }
+        output_files = [
+            ('resultFile', (pyLDAvis_output_file, open('./results/' + pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'})),
+            ('resultFile', (th_pyLDAvis_output_file, open('./results/' + th_pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'}))
+        ]
 
-        send_progress(id=id, code="050", keep=True, files=en_output_file)
-        send_progress(id=id, code="050", keep=True, files=th_output_file)
+        send_progress(id=id, code="050", keep=True, files=output_files)

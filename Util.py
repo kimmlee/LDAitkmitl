@@ -69,6 +69,10 @@ class Util:
                 conv_file_path = converted_local_root + 'conv-' + Util.path_leaf(file_path)
                 print(conv_file_path)
                 if not os.path.isfile(conv_file_path):
+
+                    print(conv_file_path)
+                    print(file_path)
+
                     call_with_args = "./ghostscript/convert_pdf2pdf_gs.sh '%s' '%s'" % (str(conv_file_path), str(file_path))
                     os.system(call_with_args)
                 else:
