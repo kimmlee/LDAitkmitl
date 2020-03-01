@@ -204,6 +204,7 @@ class TextDistribution:
     @staticmethod
     def compute_term_pairs(topic_term_dist, no_top_terms = 30):
         term_pairs = []
+        max_cooccurence_score = 0
         print(topic_term_dist)
         print("No of Topics: {0}".format(len(topic_term_dist)))
         for each_term_topic_1 in topic_term_dist:
@@ -235,6 +236,8 @@ class TextDistribution:
                                 term_pair['term_1'] = term_1['term']
                                 term_pair['term_2'] = term_2['term']
                                 term_pair['cooccur_score'] = cooccurence_score
+                                if max_cooccurence_score < cooccurence_score:
+                                    max_cooccurence_score = cooccurence_score
                                 # print('{0}, {1}: co-occurence = {2}'.format(term_1['term'], term_2['term'], cooccurence_score))
                                 # print("------------------------------------------------------------------------------------")
 
@@ -248,5 +251,11 @@ class TextDistribution:
         # print("+++++++++++++after sorting+++++++++++++")
         sorted_term_pairs = sorted(term_pairs, key=lambda i: i['cooccur_score'], reverse=True)
         print(sorted_term_pairs)
+
+        counter = 0
+        for term_pair in sorted_term_pairs:
+            term_pair['cooccur_percent'] = (term_pair['cooccur_score']/max_cooccurence_score)*100
+            sorted_term_pairs[counter] = term_pair
+            counter += 1
 
         return sorted_term_pairs
