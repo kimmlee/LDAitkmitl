@@ -49,6 +49,9 @@ th_output_dir = './results/'
 # define an output directory to save an 'thai' pyLDAvis html file
 th_pyLDAvis_output_file = 'th-result-' + str(request['id']) + '.html'
 
+# with open('json_request.json', 'r') as f:
+#     request_dict = json.load(f)
+
 # print(json.dumps(request_dict, indent=4, sort_keys=True))
 
 print('========== Beginning file download with urllib2. ==========')
@@ -87,7 +90,7 @@ for doc_id, document in request['documents'].items():
 
         except:
             print('An exception occurred when downloading a file from this url, \"{0}\"'.format(url))
-            # Delete this document that cannot be downloaded at a specific index.
+            # Record this document that cannot be downloaded in an error list.
             error_doc_ids.append(doc_id)
 
             send_progress(
@@ -115,7 +118,6 @@ ldamodeling.perform_topic_modeling(request['id'], input_local_root, to_process_f
 #
 # print('========== Beginning file download with urllib2. ==========')
 # to_process_files = []
-# abs_file_paths = []
 # counter = 0
 # #print(len(urls), len(titles))
 # for url in urls:
@@ -131,10 +133,8 @@ ldamodeling.perform_topic_modeling(request['id'], input_local_root, to_process_f
 #         except:
 #             print('An exception occurred when downloading a file from this url, \"{0}\"'.format(url))
 #             # Delete the title of a file that cannot be downloaded at a specific index.
-#             # This is to keep two lists of abs_file_paths and titles consistent.
-#
+#             # This is to keep two lists of to_process_files and titles consistent.
 #             del titles[counter]
-#
 #     else:
 #         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
 #     to_process_files.append(file)

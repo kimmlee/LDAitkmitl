@@ -155,6 +155,51 @@ class LDAModeling:
         with open(th_output_dir + th_pyLDAvis_file, "w") as outf:
             outf.write(souptemp)
 
+            
+    """
+        This method computes the co-occurence of word pais across different topics. Each word in a pair must be from different topics.
+        
+        Param:
+        
+            “term_topic_matrix”: {
+                "topic_id":0,
+                terms
+                “1”: { <<- key = topic no
+                    “1”: { <<- key = rank no
+                        “word”: “xxx”,
+                        “score”: 0.9
+                    },
+                    “2”: {
+                        “word”: “yyy”,
+                        “score”: 0.8
+                    },
+                    …
+            }
+	
+
+        
+        Return:
+        
+        Example 
+            “term_pair_sim”: {
+                “1”: { <<- key = ranking
+                    “word1”: “xxx”,
+                    “word2”: “yyy”,
+                    “score”: 0.9
+            },
+         
+    """
+    def compute_term_pairs(self, topic_term_dist):
+        term_pair_sim = ''
+
+        print(topic_term_dist)
+        # for topic_id, ranked_terms in topic_term_dist.items():
+        #     print("topic id: {0}".format(topic_id))
+        #     for rank, term_score in ranked_terms.items():
+        #         print("Rank: {0}, Term: {1}, Score: {2}".format(rank, term_score('word'), term_score('score')))
+        return term_pair_sim
+
+
 
     """to remove"""
     # Generate LDA Model
@@ -249,6 +294,13 @@ class LDAModeling:
         handle1.write(str(topic_term_dist))
         handle1.write("\n")
         handle1.close()
+
+        # print("========== PART 8 : Word/Term Pair Similairty==========")
+        # term_pair_sim = []
+        # term_pair_sim = self.compute_term_pairs(topic_term_dist)
+        # print(term_pair_sim)
+        term_pair_sim =None
+
         print("========== PART 4-1 : Document-topic (all) distribution ==========")
         ### Doc_topic_all_dist
         doc_topic_dist = []
@@ -282,7 +334,6 @@ class LDAModeling:
         pyLDAvis.save_html(vis, output_dir + pyLDAvis_output_file)
 
         print("========== PART 7 : Convert pyLDAvis HTML to Thai==========")
-        send_progress(id=id, code="180", keep=True)
         self.localize_pyLDAvis_to_thai(output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file)
 
         output_files = [
@@ -290,4 +341,17 @@ class LDAModeling:
             ('resultFile', (th_pyLDAvis_output_file, open('./results/' + th_pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'}))
         ]
 
+        send_progress(id=id, code="180", keep=True)
+        self.localize_pyLDAvis_to_thai(output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file)
+
+        result = {
+            "projectid":None,
+            "topic_chart_url": output_dir + pyLDAvis_output_file,
+            "term_topic_matrix":topic_term_dist,
+            "document_topic_matrix":doc_topic_dist,
+            "topic_stat":n_doc_intopic,
+            "term_pair_sim":term_pair_sim
+        }
+
         send_progress(id=id, code="050", keep=True, files=output_files)
+        # return result
