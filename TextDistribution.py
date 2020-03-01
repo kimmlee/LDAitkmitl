@@ -42,9 +42,7 @@ class TextDistribution:
             term_list = topic['terms']
             new_term_list = []
             # print(term_list)
-            rank = 0 
             for term in term_list:
-                rank += 1
                 term_name = term['term']
                 term_score = term['score']
                 if term_name in ["คิมม","มนน","แซมม"]:
@@ -118,10 +116,9 @@ class TextDistribution:
             # print(i[0])
             # print(doc_dist_dict)
             if i[0] in doc_dist_dict:
-                print("Here")
                 doc_dist_dict[i[0]] += 1
-            print(i, end=' ')
-            print(doc_dist_dict)
+            # print(i, end=' ')
+            # print(doc_dist_dict)
 
         print()
         print('-------------------------------------')
@@ -146,3 +143,110 @@ class TextDistribution:
             n_doc_intopic.append(ndoc_dict)
 
         return n_doc_intopic
+
+    """
+        This method computes the co-occurence of word pais across different topics. Each word in a pair must be from different topics.
+
+        Param:
+
+            "term_topic_matrix":[
+                {
+                    "topic_id":0,
+                    "terms":[
+                        {
+                           "term":"prawns",
+                           "score":1.0265928777676891
+                        },
+                        {
+                           "term":"long",
+                           "score":1.0263626183179442
+                        },
+                        {
+                           "term":"Recruitment",
+                           "score":1.0260714211530289
+                        }
+                    ]
+                },
+                {
+                    "topic_id":0,
+                    "terms":[
+                        {
+                           "term":"prawns",
+                           "score":1.0265928777676891
+                        },
+                        {
+                           "term":"long",
+                           "score":1.0263626183179442
+                        },
+                        {
+                           "term":"Recruitment",
+                           "score":1.0260714211530289
+                        }
+                    ]
+                }
+           ]
+
+
+        Return:
+
+        Example 
+            "term_pairs":[
+                {
+                    "term_1":"prawns",
+                    "term_2":"hello",
+                    “cooccur_score”:0.789
+                },
+                ...
+            ]
+
+
+    """
+    @staticmethod
+    def compute_term_pairs(topic_term_dist, no_top_terms = 30):
+        term_pairs = []
+        print(topic_term_dist)
+        print("No of Topics: {0}".format(len(topic_term_dist)))
+        for each_term_topic_1 in topic_term_dist:
+            topic_id_1 = each_term_topic_1['topic_id']
+            print("topic id 1: {0}".format(topic_id_1))
+
+            for each_term_topic_2 in topic_term_dist:
+                topic_id_2 = each_term_topic_2['topic_id']
+
+                # compare terms from two different topics as half (triangle) matrix regardless of the same number of topic_id
+                if (int(topic_id_1) < int(topic_id_2)):
+                    print("topic id 2: {0}".format(topic_id_2))
+
+                    terms_1 = each_term_topic_1['terms']
+                    for i in range(min(len(terms_1), no_top_terms)):
+                        term_pair = {}
+                        term_1 = terms_1[i]
+                        score_1 = term_1['score']
+                        # print('topic id {0}, term {1}: "{2}": score={3}'.format(topic_id_1, i, term_1['term'], score_1))
+
+                        terms_2 = each_term_topic_2['terms']
+                        for j in range(min(len(terms_2), no_top_terms)):
+                            term_2 = terms_2[j]
+                            score_2 = term_2['score']
+                            # print('topic id {0}, term {1}: "{2}": score={3}'.format(topic_id_2, j, term_2['term'], score_2))
+
+                            if(term_1['term'] !=  term_2['term']):
+                                cooccurence_score = score_1 * score_2
+                                term_pair['term_1'] = term_1['term']
+                                term_pair['term_2'] = term_2['term']
+                                term_pair['cooccur_score'] = cooccurence_score
+                                # print('{0}, {1}: co-occurence = {2}'.format(term_1['term'], term_2['term'], cooccurence_score))
+                                # print("------------------------------------------------------------------------------------")
+
+                                term_pairs.append(term_pair)
+
+                            term_pair = {}
+
+        # print("============before sorting===========")
+        # print(term_pairs)
+
+        # print("+++++++++++++after sorting+++++++++++++")
+        sorted_term_pairs = sorted(term_pairs, key=lambda i: i['cooccur_score'], reverse=True)
+        print(sorted_term_pairs)
+
+        return sorted_term_pairs

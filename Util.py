@@ -44,13 +44,14 @@ class Util:
     def read_file(id, local_path, files, converted_local_root):
         # create a dictionary, in which a key is a file name and a value is a document text (raw text.)
         data = {}
+        unreadable_docs = []
         # Read all given files in docx or readable pdf (readable means such a pdf file must be able to be read by pdfminer.)
         for file in files:
             data_file_text = ""
             file_path = local_path + file
+            f_list = re.split("; |/|\\.", file_path)
             try:
                 send_progress(id=id, code="111", payload=[file_path.split("/")[-1]])
-                f_list = re.split("; |/|\\.", file_path)
                 if file_path.endswith('.pdf'):
                     data_file_text = pdfReader.extract_pdf(file_path)
                 elif file_path.endswith('.docx'):
@@ -85,14 +86,16 @@ class Util:
                 except Exception as inst:
                     print('Exception message: {0}'.format(inst))
                     send_progress(id=id, code="510", payload=[conv_file_path.split("/")[-1]])
+                    unreadable_docs.append(f_list[-2])
             except:
                 print("=======ERROR cannot find the below file in a given path=======")
                 print(file_path, f_list)
+                unreadable_docs.append(f_list[-2])
                 print('+++++++++++++++++++')
 
             # create rd_list for create training data
         #         data_file_text.close()
-        return data
+        return data, unreadable_docs
 
     # @staticmethod
     # def find_read_file(path, converted_local_root):
@@ -148,8 +151,8 @@ class Util:
                 print(
                     '-- Only pdf and docx formats are supported. This file will be ignored due to not support types: \"{0}\". --'.format(
                         file))
-        data = Util.read_file(id, local_path, to_read_files, converted_local_root)
-        return data
+        data, unreadable_docs = Util.read_file(id, local_path, to_read_files, converted_local_root)
+        return data, unreadable_docs
 
     """
     A static method, path_leaf(path), returns a file name (leaf) from a given url or path

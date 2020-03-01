@@ -2,6 +2,7 @@ import sys
 sys.path.append("..")
 
 from Util import Util
+#from LDAModeling import LDAModeling
 from LDAModeling import LDAModeling
 import os
 import urllib.request
@@ -18,8 +19,9 @@ else:
     request = {
         'id': sys.argv[1],
         'projectId': sys.argv[2],
-        'documents': ast.literal_eval(sys.argv[3]),
-        'max_no_topic': int(sys.argv[4])
+        'project_name': sys.argv[3],
+        'documents': ast.literal_eval(sys.argv[4]),
+        'max_no_topic': int(sys.argv[5])
     }
 
 """
@@ -54,11 +56,15 @@ th_pyLDAvis_output_file = 'th-result-' + str(request['id']) + '.html'
 
 # print(json.dumps(request_dict, indent=4, sort_keys=True))
 
+project_id = request['projectId']
+project_name = request['project_name']
+max_no_topic = request['max_no_topic']
+
 print('========== Beginning file download with urllib2. ==========')
+
 to_process_files = []
 to_process_titles = []
-error_doc_ids = []
-counter = 0
+undownload_docs = []
 
 send_progress(
     id=request['id'],
@@ -80,39 +86,34 @@ for doc_id, document in request['documents'].items():
         try:
             print('downloading file from this url: \"{0}\" with this file name : \"{1}\".'.format(url, file))
             urllib.request.urlretrieve(url, abs_file_path)
+
             to_process_files.append(file)
             to_process_titles.append(document['title'])
-
             send_progress(
                 id=request['id'],
                 code="021",
                 payload=[file])
-
         except:
             print('An exception occurred when downloading a file from this url, \"{0}\"'.format(url))
             # Record this document that cannot be downloaded in an error list.
-            error_doc_ids.append(doc_id)
-
+            undownload_docs.append(doc_id)
             send_progress(
                 id=request['id'],
                 code="410",
                 payload=[url],
                 keep=True)
-
     else:
         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
         to_process_files.append(file)
         to_process_titles.append(document['title'])
 
-    counter += 1
-
 # print('========================')
 # print(documents)
 
 ldamodeling = LDAModeling()
-ldamodeling.perform_topic_modeling(request['id'], input_local_root, to_process_files, to_process_titles, converted_local_root,
-                                   output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
-                                   request['max_no_topic'])
+ldamodeling.perform_topic_modeling(request['id'], project_name, input_local_root, to_process_files, to_process_titles, converted_local_root,
+                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
+                                    max_no_topic)
 
 # max_no_topic = 10
 #

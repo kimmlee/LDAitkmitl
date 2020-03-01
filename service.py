@@ -58,6 +58,7 @@ def run_model(connection, channel, delivery_tag, body):
         'main.py',
         payload['id'],
         payload['projectId'],
+        payload['project_name'],
         payload['documents'],
         payload['max_no_topic']], stdout=subprocess.PIPE, cwd="/app")
     for line in process.stdout:
