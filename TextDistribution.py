@@ -203,9 +203,8 @@ class TextDistribution:
 
 
     """
-
     @staticmethod
-    def compute_term_pairs(self, topic_term_dist, no_top_terms = 30):
+    def compute_term_pairs(topic_term_dist, no_top_terms = 30):
         term_pairs = []
         print(topic_term_dist)
         print("No of Topics: {0}".format(len(topic_term_dist)))
@@ -233,14 +232,16 @@ class TextDistribution:
                             score_2 = term_2['score']
                             # print('topic id {0}, term {1}: "{2}": score={3}'.format(topic_id_2, j, term_2['term'], score_2))
 
-                            cooccurence_score = score_1 * score_2
-                            term_pair['term_1'] = term_1['term']
-                            term_pair['term_2'] = term_2['term']
-                            term_pair['cooccur_score'] = cooccurence_score
-                            # print('{0}, {1}: co-occurence = {2}'.format(term_1['term'], term_2['term'], cooccurence_score))
-                            # print("------------------------------------------------------------------------------------")
+                            if(term_1['term'] !=  term_2['term']):
+                                cooccurence_score = score_1 * score_2
+                                term_pair['term_1'] = term_1['term']
+                                term_pair['term_2'] = term_2['term']
+                                term_pair['cooccur_score'] = cooccurence_score
+                                # print('{0}, {1}: co-occurence = {2}'.format(term_1['term'], term_2['term'], cooccurence_score))
+                                # print("------------------------------------------------------------------------------------")
 
-                            term_pairs.append(term_pair)
+                                term_pairs.append(term_pair)
+
                             term_pair = {}
 
         # print("============before sorting===========")

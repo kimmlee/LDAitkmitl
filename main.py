@@ -3,7 +3,7 @@ sys.path.append("..") # Adds higher directory to python modules path.
 
 from Util import Util
 #from LDAModeling import LDAModeling
-from LDAModeling_v2 import LDAModeling
+from LDAModeling import LDAModeling
 
 import os
 # This package is for downloading pdf
@@ -105,15 +105,13 @@ max_no_topic = request['max_no_topic']
 print('========== Beginning file download with urllib2. ==========')
 to_process_files = []
 to_process_titles = []
-error_doc_ids = []
-counter = 0
+undownload_docs = []
 for doc_id, document in documents.items():
     # print('document id: {0}'.format(doc_id))
     # print(document)
 
     url = document['url']
     file = Util.path_leaf(url)
-    # print(file_)
     abs_file_path =  input_local_root + file
     # print(abs_file_path)
 
@@ -121,27 +119,34 @@ for doc_id, document in documents.items():
         try:
             print('downloading file from this url: \"{0}\" with this file name : \"{1}\".'.format(url, file))
             urllib.request.urlretrieve(url, abs_file_path)
+
+            to_process_files.append(file)
+            to_process_titles.append(document['title'])
         except:
             print('An exception occurred when downloading a file from this url, \"{0}\"'.format(url))
             # Record this document that cannot be downloaded in an error list.
-            error_doc_ids.append(doc_id)
+            undownload_docs.append(doc_id)
     else:
         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
 
-    to_process_files.append(file)
-    to_process_titles.append(document['title'])
-    counter += 1
+        to_process_files.append(file)
+        to_process_titles.append(document['title'])
+
+
 
 # print('========================')
 # print(documents)
 
 ldamodeling = LDAModeling()
-results = ldamodeling.perform_topic_modeling(project_name, input_local_root, to_process_files, to_process_titles, converted_local_root,
+result = ldamodeling.perform_topic_modeling(project_name, input_local_root, to_process_files, to_process_titles, converted_local_root,
                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
                                    max_no_topic)
 
-results['project_id'] = project_id
-print(results)
+result['project_id'] = project_id
+result['undownloadable_documents'] = undownload_docs
+
+with open('result.json', 'w', encoding='utf-8') as outfile:
+    json.dump(str(result), outfile, ensure_ascii=False, indent=4)
 
 # max_no_topic = 10
 #
