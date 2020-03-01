@@ -2,7 +2,8 @@ import sys
 sys.path.append("..") # Adds higher directory to python modules path.
 
 from Util import Util
-from LDAModeling import LDAModeling
+#from LDAModeling import LDAModeling
+from LDAModeling_v2 import LDAModeling
 
 import os
 # This package is for downloading pdf
@@ -28,13 +29,13 @@ converted_local_root = '/Users/Kim/Documents/trf_dir/TestDownloadFiles/converted
 output_dir = '/Users/Kim/Documents/trf_dir/PyLDAVizOutput/'
 # output_dir = '/Users/dhanamon/LDAitkmitl/PyLDAVizOutput/'
 # define an output directory to save an 'original' pyLDAvis html file
-pyLDAvis_output_file = '5pdf_LDAvis_newmm_2n_postag_title_10n.html'
+pyLDAvis_output_file = '3pdf_LDAvis_newmm_2n_postag_title_10n.html'
 
 # define an output directory to save an 'thai' pyLDAvis html file
 th_output_dir = '/Users/Kim/Documents/trf_dir/PyLDAVizOutput/th/'
 # th_output_dir = '/Users/dhanamon/LDAitkmitl/PyLDAVizOutput/th/'
 # define an output directory to save an 'thai' pyLDAvis html file
-th_pyLDAvis_output_file = 'th_5pdf_LDAvis_newmm_2n_postag_title_10n.html'
+th_pyLDAvis_output_file = 'th_3pdf_LDAvis_newmm_2n_postag_title_10n.html'
 
 urls = [
         # 'https://elibrary.trf.or.th/fullP/SRI61X0602/SRI61X0602_full.pdf',
@@ -98,6 +99,7 @@ for request in request_dict:
     documents = request['documents']
 
 project_id = request['project_id']
+project_name = request['project_name']
 max_no_topic = request['max_no_topic']
 
 print('========== Beginning file download with urllib2. ==========')
@@ -134,10 +136,12 @@ for doc_id, document in documents.items():
 # print(documents)
 
 ldamodeling = LDAModeling()
-ldamodeling.perform_topic_modeling(input_local_root, to_process_files, to_process_titles, converted_local_root,
+results = ldamodeling.perform_topic_modeling(project_name, input_local_root, to_process_files, to_process_titles, converted_local_root,
                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
                                    max_no_topic)
 
+results['project_id'] = project_id
+print(results)
 
 # max_no_topic = 10
 #
