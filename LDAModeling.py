@@ -13,6 +13,7 @@ import pandas as pd
 
 import bs4
 from service_helper import send_progress
+import json
 
 
 from operator import attrgetter
@@ -169,7 +170,7 @@ class LDAModeling:
         ldamodel = LdaModel(corpus, num_top, id2word=dictionary, decay=0.6, random_state=2, passes=10)
         return ldamodel
 
-    def perform_topic_modeling(self, id, project_name, input_local_root, files, titles, converted_local_root,
+    def perform_topic_modeling(self, id, project_id, project_name, input_local_root, files, titles, converted_local_root,
                                output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
                                max_no_topic = 10, is_short_words_removed = True):
 
@@ -259,13 +260,13 @@ class LDAModeling:
         ### Doc_topic_all_dist
         doc_topic_dist = []
         doc_topic_dist = TextDistribution.docTopic_dist(doc_topic_dist, data_df, num_doc, inp_list,dictionary2,ldamodel)
-        print(doc_topic_dist)
+        # print(doc_topic_dist)
 
         print("========== PART 4-2 : Document-topic (min) distribution ==========")
         ### Doc_topic_min_dist
         n_doc_intopic = []
         n_doc_intopic = TextDistribution.Ndoc_topic(n_doc_intopic,num_doc, data_df, inp_list, dictionary2, ldamodel)
-        print(n_doc_intopic)
+        # print(n_doc_intopic)
 
         print("========== PART 5 : Evaluate Model ==========")
 
@@ -273,11 +274,11 @@ class LDAModeling:
 
         # Evaluate
         lda_coherence = CoherenceModel(ldamodel, corpus=corpus2, dictionary=dictionary2, coherence='u_mass')
-        print(lda_coherence.get_coherence_per_topic())
-        print("LDA umass score = %.4f" % (lda_coherence.get_coherence()))
+        # print(lda_coherence.get_coherence_per_topic())
+        # print("LDA umass score = %.4f" % (lda_coherence.get_coherence()))
 
         lda_coherence = CoherenceModel(ldamodel, texts=new_lists, dictionary=dictionary2, coherence='c_uci')
-        print("LDA uci score = %.4f" % (lda_coherence.get_coherence()))
+        # print("LDA uci score = %.4f" % (lda_coherence.get_coherence()))
 
         print("========== PART 6 : Export pyLDAvis HTML ==========")
 
@@ -294,23 +295,26 @@ class LDAModeling:
         terms_pairs = TextDistribution.compute_term_pairs(topic_term_dist, self.no_top_terms)
         print(terms_pairs)
 
+        send_progress(id=id, code="180", keep=True)
+
+        result = {
+            "project_id": project_id,
+            # "topic_chart_url": output_dir + pyLDAvis_output_file,
+            "term_topic_matrix": topic_term_dist,
+            "document_topic_matrix": doc_topic_dist,
+            "topic_stat": n_doc_intopic,
+            "term_pairs": terms_pairs,
+            "unreadable_documents": unreadable_docs
+        }
+
         output_files = [
             ('resultFile', (pyLDAvis_output_file, open('./results/' + pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'})),
             ('resultFile', (th_pyLDAvis_output_file, open('./results/' + th_pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'}))
         ]
 
-        send_progress(id=id, code="180", keep=True)
-        self.localize_pyLDAvis_to_thai(output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file)
+        # send_progress(id=id, code="190", data=result, keep=True, files=output_files)
+        send_progress(id=id, code="191", files=output_files)
+        send_progress(id=id, code="192", data=str(result))
 
-        result = {
-            "project_id":None,
-            # "topic_chart_url": output_dir + pyLDAvis_output_file,
-            "term_topic_matrix":topic_term_dist,
-            "document_topic_matrix":doc_topic_dist,
-            "topic_stat":n_doc_intopic,
-            "term_pairs":terms_pairs,
-            "unreadable_documents":unreadable_docs
-        }
-
-        send_progress(id=id, code="050", data=result, keep=True, files=output_files)
+        send_progress(id=id, code="050", keep=True)
         # return result

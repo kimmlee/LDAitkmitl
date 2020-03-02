@@ -3,6 +3,7 @@ import time
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+import json
 
 session = requests.Session()
 retry = Retry(connect=3, backoff_factor=0.5)
@@ -30,6 +31,8 @@ def is_downloadable(url):
 def send_progress(id, code, payload=None, keep=False, data=None, files=None):
     progress_payload = {'id': id, 'code': code, 'keep': keep}
 
+    print(progress_payload)
+
     if "EXPRESS_HOST" in os.environ:
         api_url = "http://"+os.environ["EXPRESS_HOST"]+"/progress"
     else:
@@ -47,9 +50,9 @@ def send_progress(id, code, payload=None, keep=False, data=None, files=None):
     while not sent:
         try:
             if files is None:
-                r = session.post(api_url, progress_payload)
+                r = session.post(api_url, json=progress_payload)
             else:
-                r = session.post(api_url, json=progress_payload, files=files)
+                r = session.post(api_url, progress_payload, files=files)
             sent = True
         except Exception as error:
             print(" [Worker->API] Trying to send ...")
@@ -81,6 +84,10 @@ def get_status_message(status_code):
         '160': "evaluating model",
         '170': 'exporting to html format',
         '180': 'converting exported html to Thai',
+
+        "190": "pushing result to API",
+        "191": "pushing files",
+        "192": "pushing result",
 
         '410': "{} is not downloadable",
 

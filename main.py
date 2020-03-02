@@ -18,7 +18,7 @@ if not as_worker:
 else:
     request = {
         'id': sys.argv[1],
-        'projectId': sys.argv[2],
+        'project_id': sys.argv[2],
         'project_name': sys.argv[3],
         'documents': ast.literal_eval(sys.argv[4]),
         'max_no_topic': int(sys.argv[5])
@@ -56,7 +56,8 @@ th_pyLDAvis_output_file = 'th-result-' + str(request['id']) + '.html'
 
 # print(json.dumps(request_dict, indent=4, sort_keys=True))
 
-project_id = request['projectId']
+id = request['id']
+project_id = request['project_id']
 project_name = request['project_name']
 max_no_topic = request['max_no_topic']
 
@@ -67,7 +68,7 @@ to_process_titles = []
 undownload_docs = []
 
 send_progress(
-    id=request['id'],
+    id=id,
     code="011",
     payload=["s" if len(to_process_files) > 0 else ""],
     keep=True)
@@ -90,7 +91,7 @@ for doc_id, document in request['documents'].items():
             to_process_files.append(file)
             to_process_titles.append(document['title'])
             send_progress(
-                id=request['id'],
+                id=id,
                 code="021",
                 payload=[file])
         except:
@@ -98,7 +99,7 @@ for doc_id, document in request['documents'].items():
             # Record this document that cannot be downloaded in an error list.
             undownload_docs.append(doc_id)
             send_progress(
-                id=request['id'],
+                id=id,
                 code="410",
                 payload=[url],
                 keep=True)
@@ -111,7 +112,7 @@ for doc_id, document in request['documents'].items():
 # print(documents)
 
 ldamodeling = LDAModeling()
-ldamodeling.perform_topic_modeling(request['id'], project_name, input_local_root, to_process_files, to_process_titles, converted_local_root,
+ldamodeling.perform_topic_modeling(id, project_id, project_name, input_local_root, to_process_files, to_process_titles, converted_local_root,
                                     output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
                                     max_no_topic)
 
