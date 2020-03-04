@@ -70,7 +70,7 @@ undownload_docs = []
 send_progress(
     id=id,
     code="011",
-    payload=["s" if len(to_process_files) > 0 else ""],
+    payload=["s" if len(to_process_files) > 1 else ""],
     keep=True)
 
 for doc_id, document in request['documents'].items():

@@ -31,8 +31,6 @@ def is_downloadable(url):
 def send_progress(id, code, payload=None, keep=False, data=None, files=None):
     progress_payload = {'id': id, 'code': code, 'keep': keep}
 
-    print(progress_payload)
-
     if "EXPRESS_HOST" in os.environ:
         api_url = "http://"+os.environ["EXPRESS_HOST"]+"/progress"
     else:
@@ -45,6 +43,9 @@ def send_progress(id, code, payload=None, keep=False, data=None, files=None):
 
     if data is not None:
         progress_payload['data'] = data
+
+    print("[Send Progress] => ", end="")
+    print(progress_payload)
 
     sent = False
     while not sent:
@@ -69,7 +70,7 @@ def get_status_message(status_code):
         '022': "{} is being converted",
         '030': "converting request's resources",
         '040': "threading",
-        '050': "complete exporting file in {} language",
+        '050': "complete",
 
         '110': "input dataset",
         '111': "input dataset from {}",

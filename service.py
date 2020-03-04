@@ -18,7 +18,7 @@ def run_model(connection, channel, delivery_tag, body):
 
     # Get Payload Data
     payload = ast.literal_eval(body.decode('utf-8'))
-    print(payload)
+    # print(payload)
     print("**********>> Queue %s starts <<**********" % payload['id'])
 
     # make payload.id a string

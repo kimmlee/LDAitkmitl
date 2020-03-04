@@ -250,7 +250,7 @@ class LDAModeling:
         # print(dictionary2['ทุจริต'])
         # print(dictionary2)
         topic_term_dist = TextDistribution.topicTerm_dist(dict_2,corpus2,topic_term_dist, term_dist_topic)
-        print(topic_term_dist)
+        # print(topic_term_dist)
         # handle1=open('topic_term_dist','a+')
         # handle1.write(str(topic_term_dist))
         # handle1.write("\n")
@@ -293,7 +293,7 @@ class LDAModeling:
 
         print("========== PART 8 : Word/Term Pair Similairty==========")
         terms_pairs = TextDistribution.compute_term_pairs(topic_term_dist, self.no_top_terms)
-        print(terms_pairs)
+        # print(terms_pairs)
 
         send_progress(id=id, code="180", keep=True)
 
