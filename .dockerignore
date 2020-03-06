@@ -3,6 +3,9 @@
 .idea
 .vscode
 notebooks
+documents
+converted
+results
 unused
 Dockerfile
 .DS_Store

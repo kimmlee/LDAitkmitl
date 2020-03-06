@@ -32,7 +32,7 @@ def send_progress(id, code, payload=None, keep=False, data=None, files=None):
     progress_payload = {'id': id, 'code': code, 'keep': keep}
 
     if "EXPRESS_HOST" in os.environ:
-        api_url = "http://"+os.environ["EXPRESS_HOST"]+"/progress"
+        api_url = "http://"+os.environ["EXPRESS_HOST"]+":3000/progress"
     else:
         api_url = "http://queueing-express:3000/progress"
 
