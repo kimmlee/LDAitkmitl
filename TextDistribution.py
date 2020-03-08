@@ -204,18 +204,18 @@ class TextDistribution:
     @staticmethod
     def compute_term_pairs(topic_term_dist, no_top_terms = 30):
         term_pairs = []
-        print(topic_term_dist)
-        print("No of Topics: {0}".format(len(topic_term_dist)))
+        # print(topic_term_dist)
+        # print("No of Topics: {0}".format(len(topic_term_dist)))
         for each_term_topic_1 in topic_term_dist:
             topic_id_1 = each_term_topic_1['topic_id']
-            print("topic id 1: {0}".format(topic_id_1))
+            # print("topic id 1: {0}".format(topic_id_1))
 
             for each_term_topic_2 in topic_term_dist:
                 topic_id_2 = each_term_topic_2['topic_id']
 
                 # compare terms from two different topics as half (triangle) matrix regardless of the same number of topic_id
                 if (int(topic_id_1) < int(topic_id_2)):
-                    print("topic id 2: {0}".format(topic_id_2))
+                    # print("topic id 2: {0}".format(topic_id_2))
 
                     terms_1 = each_term_topic_1['terms']
                     for i in range(min(len(terms_1), no_top_terms)):
@@ -247,6 +247,6 @@ class TextDistribution:
 
         # print("+++++++++++++after sorting+++++++++++++")
         sorted_term_pairs = sorted(term_pairs, key=lambda i: i['cooccur_score'], reverse=True)
-        print(sorted_term_pairs)
+        # print(sorted_term_pairs)
 
         return sorted_term_pairs

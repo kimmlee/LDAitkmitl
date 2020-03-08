@@ -5,13 +5,31 @@ import ast
 import threading
 import functools
 from service_helper import send_progress
+from service_helper import send_heartbeat
 import os
 import time
+import random
+import string
 
 from pathlib import Path
 Path("./documents").mkdir(parents=True, exist_ok=True)
 Path("./converted").mkdir(parents=True, exist_ok=True)
 Path("./results").mkdir(parents=True, exist_ok=True)
+
+work_count = 0
+
+worker_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+print("Worker ID:", end="")
+print(worker_id)
+
+
+def master_link():
+    threading.Timer(5.0, master_link).start()
+    send_heartbeat(worker_id)
+
+
+master_link()
+
 
 def run_model(connection, channel, delivery_tag, body):
     thread_id = threading.get_ident()

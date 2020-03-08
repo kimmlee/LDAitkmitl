@@ -3,7 +3,8 @@ import time
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-import json
+import string
+import datetime
 
 session = requests.Session()
 retry = Retry(connect=3, backoff_factor=0.5)
@@ -28,8 +29,36 @@ def is_downloadable(url):
         return False
 
 
+def send_heartbeat(worker_id):
+
+    if "EXPRESS_HOST" in os.environ:
+        api_url = "http://"+os.environ["EXPRESS_HOST"]+":3000/health/worker"
+    else:
+        api_url = "http://queueing-express:3000/health/worker"
+    try:
+        session.post(api_url, json={"worker_id": worker_id})
+    except Exception as error:
+        print(" [HEARTBEAT] Fail to notify Core API. Trying again in 5 sec.")
+        time.sleep(5)
+
+
+def filename_from_request(project_id):
+    now = datetime.datetime.now()
+    name = [str(project_id).zfill(9), now.strftime('%Y%m%d'), now.strftime('%H%M')]
+    name = "_".join(name)
+
+    filenames = {
+        "th": name + "_th.html",
+        "en": name + "_en.html"
+    }
+
+    return filenames
+
+
 def send_progress(id, code, payload=None, keep=False, data=None, files=None):
     progress_payload = {'id': id, 'code': code, 'keep': keep}
+    print("[Send Progress] => ", end="")
+    print(progress_payload)
 
     if "EXPRESS_HOST" in os.environ:
         api_url = "http://"+os.environ["EXPRESS_HOST"]+":3000/progress"
@@ -43,9 +72,6 @@ def send_progress(id, code, payload=None, keep=False, data=None, files=None):
 
     if data is not None:
         progress_payload['data'] = data
-
-    print("[Send Progress] => ", end="")
-    print(progress_payload)
 
     sent = False
     while not sent:
@@ -92,7 +118,8 @@ def get_status_message(status_code):
 
         '410': "{} is not downloadable",
 
-        '510': "input dataset failed on document {}"
+        '510': "input dataset failed on document {}",
+        "601": "document download process is failed due to unreachable url(s)"
     }
 
     return statuses.get(str(status_code), "Unknown Error")

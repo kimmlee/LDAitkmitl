@@ -78,7 +78,7 @@ for doc_id, document in request['documents'].items():
     # print(document)
 
     url = document['url']
-    file = Util.path_leaf(url)
+    file = doc_id + '-' + Util.path_leaf(url)
     # print(file_)
     abs_file_path = input_local_root + file
     # print(abs_file_path)
@@ -113,7 +113,7 @@ for doc_id, document in request['documents'].items():
 
 ldamodeling = LDAModeling()
 ldamodeling.perform_topic_modeling(id, project_id, project_name, input_local_root, to_process_files, to_process_titles, converted_local_root,
-                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
+                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file, undownload_docs,
                                     max_no_topic)
 
 # max_no_topic = 10

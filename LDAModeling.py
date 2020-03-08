@@ -13,10 +13,7 @@ import pandas as pd
 
 import bs4
 from service_helper import send_progress
-import json
-
-
-from operator import attrgetter
+from service_helper import filename_from_request
 
 """An ensemble classifier that uses heterogeneous models at the base layer and a aggregation model at the 
     aggregation layer. A k-fold cross validation is used to generate training data for the stack layer model.
@@ -171,7 +168,7 @@ class LDAModeling:
         return ldamodel
 
     def perform_topic_modeling(self, id, project_id, project_name, input_local_root, files, titles, converted_local_root,
-                               output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
+                               output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file, undownloadable_documents,
                                max_no_topic = 10, is_short_words_removed = True):
 
         print("========== PART 1 : Input Files ==========")
@@ -180,6 +177,11 @@ class LDAModeling:
         num_doc = len(titles)
 
         print("========== PART 2 : Data Preparation and Creating Word Tokenization ==========")
+
+        if len(data) == 0 and len(titles) == 0:
+            print("[E] Data is not well prepared. Canceling this job...")
+            send_progress(id=id, code="601", keep=True)
+            return
 
         send_progress(id=id, code="120", keep=True)
 
@@ -297,19 +299,22 @@ class LDAModeling:
 
         send_progress(id=id, code="180", keep=True)
 
+        topic_chart_url = filename_from_request(project_id)
+
         result = {
             "project_id": project_id,
-            # "topic_chart_url": output_dir + pyLDAvis_output_file,
+            "topic_chart_url": topic_chart_url,
             "term_topic_matrix": topic_term_dist,
             "document_topic_matrix": doc_topic_dist,
             "topic_stat": n_doc_intopic,
             "term_pairs": terms_pairs,
-            "unreadable_documents": unreadable_docs
+            "unreadable_documents": unreadable_docs,
+            "undownloadable_documents": undownloadable_documents
         }
 
         output_files = [
-            ('resultFile', (pyLDAvis_output_file, open('./results/' + pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'})),
-            ('resultFile', (th_pyLDAvis_output_file, open('./results/' + th_pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'}))
+            ('resultFile', (topic_chart_url['en'], open('./results/' + pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'})),
+            ('resultFile', (topic_chart_url['th'], open('./results/' + th_pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'}))
         ]
 
         # send_progress(id=id, code="190", data=result, keep=True, files=output_files)
