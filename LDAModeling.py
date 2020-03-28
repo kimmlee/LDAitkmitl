@@ -183,6 +183,11 @@ class LDAModeling:
             send_progress(id=id, code="601", keep=True)
             return
 
+        if len(data) != len(titles):
+            print("[E] Data is duplicated. Canceling this job...")
+            send_progress(id=id, code="602", keep=True)
+            return
+
         send_progress(id=id, code="120", keep=True)
 
         # Set data into dataframe type
@@ -323,3 +328,11 @@ class LDAModeling:
 
         send_progress(id=id, code="050", keep=True)
         # return result
+
+        print("=================================================")
+        print("=================================================")
+        for key in result.keys():
+            print(result[key])
+            print()
+        print("=================================================")
+        print("=================================================")

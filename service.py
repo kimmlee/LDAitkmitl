@@ -36,11 +36,13 @@ def run_model(connection, channel, delivery_tag, body):
 
     # Get Payload Data
     payload = ast.literal_eval(body.decode('utf-8'))
+
     # print(payload)
     print("**********>> Queue %s starts <<**********" % payload['id'])
 
     # make payload.id a string
     payload['id'] = str(payload['id'])
+    payload['project_id'] = str(payload['project_id'])
     payload['max_no_topic'] = str(payload['max_no_topic'])
 
     '''
@@ -135,10 +137,9 @@ while True:
             int(os.getenv("RABBITMQ_PORT", '5672')), 
             '/', 
             credentials))
-
         callback_hook = functools.partial(callback, args=(connection, threads))
         channel = connection.channel()
-        channel.basic_qos(prefetch_count=2)
+        channel.basic_qos(prefetch_count=1)
         channel.basic_consume(queue="processing.requests", on_message_callback=callback_hook)
         channel.start_consuming()
 

@@ -10,6 +10,7 @@ from service_helper import send_progress
 import ntpath
 
 import os
+import traceback
 
 """
     A Utility (Util) class acts like a collection of methods to handles file management, loading and saving. 
@@ -59,37 +60,26 @@ class Util:
 
                 # Add document text in a dictionary
                 data[f_list[-2]] = [str(data_file_text)]
-            except PDFSyntaxError as err:
-                print('=======This file, {0}, is unreadable======='.format(file_path))
-                print('Converting pdf by ghostscirpt')
-
+            except (PDFSyntaxError, AttributeError) as err:
                 send_progress(id=id, code="022", payload=[file_path.split("/")[-1]])
-
-                conv_file_path = converted_local_root + 'conv-' + Util.path_leaf(file_path)
-                print(conv_file_path)
+                print(' |-Converting {0} by ghostscript'.format(file_path))
+                conv_file_path = converted_local_root + Util.path_leaf(file_path)
                 if not os.path.isfile(conv_file_path):
-
-                    print(conv_file_path)
-                    print(file_path)
-
                     call_with_args = "./ghostscript/convert_pdf2pdf_gs.sh '%s' '%s'" % (str(conv_file_path), str(file_path))
                     os.system(call_with_args)
                 else:
-                    print("This file, {0}, already exists and has previously been converted by ghostscript. So, it will not be converted again.".format(conv_file_path))
-
+                    print(" |-{0} has previously been converted by ghostscript.".format(conv_file_path))
                 try:
-
-                    data_file_text = pdfReader.extract_pdf(conv_file_path)
                     send_progress(id=id, code="111", payload=[file_path.split("/")[-1]])
+                    data_file_text = pdfReader.extract_pdf(conv_file_path)
                     # Add document text in a dictionary
                     data[f_list[-2]] = [str(data_file_text)]
                 except Exception as inst:
-                    print('Exception message: {0}'.format(inst))
                     send_progress(id=id, code="510", payload=[conv_file_path.split("/")[-1]])
+                    print('Exception message: {0}'.format(inst))
                     unreadable_docs.append(f_list[-2])
-            except:
-                print("=======ERROR cannot find the below file in a given path=======")
-                print(file_path, f_list)
+            except Exception as err:
+                print("{0} not found.".format(file_path))
                 unreadable_docs.append(f_list[-2])
                 print('+++++++++++++++++++')
 
@@ -142,16 +132,18 @@ class Util:
         to_read_files = []
         for file in files:
             if file.endswith('.pdf'):
-                print('-- To read file: \"{0}\". --'.format(file))
+                print(' |- To read file: \"{0}\". --'.format(file))
                 to_read_files.append(file)
             elif file.endswith('.docx'):
-                print('-- To read file: \"{0}\". --'.format(file))
+                print(' |- To read file: \"{0}\". --'.format(file))
                 to_read_files.append(file)
             else:
                 print(
                     '-- Only pdf and docx formats are supported. This file will be ignored due to not support types: \"{0}\". --'.format(
                         file))
         data, unreadable_docs = Util.read_file(id, local_path, to_read_files, converted_local_root)
+        print(to_read_files)
+        print(unreadable_docs)
         return data, unreadable_docs
 
     """
@@ -168,7 +160,16 @@ class Util:
     @staticmethod
     def path_leaf(path):
         head, tail = ntpath.split(path)
-        return tail or ntpath.basename(head)
+        fname = None
+
+        if tail is not None:
+            if tail.find("fname=") != -1:
+                for param in tail.split("&"):
+                    if param.find("fname=") != -1:
+                        fname = param.split('=')[1]
+                        break
+
+        return fname or tail or ntpath.basename(head)
 
     """
       A static method, path_dir(path), returns a directory where a given file is located from a given url or path

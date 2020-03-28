@@ -59,7 +59,7 @@ th_pyLDAvis_output_file = 'th-result-' + str(request['id']) + '.html'
 id = request['id']
 project_id = request['project_id']
 project_name = request['project_name']
-max_no_topic = request['max_no_topic']
+max_no_topic = int(request['max_no_topic'])
 
 print('========== Beginning file download with urllib2. ==========')
 
@@ -78,7 +78,7 @@ for doc_id, document in request['documents'].items():
     # print(document)
 
     url = document['url']
-    file = doc_id + '-' + Util.path_leaf(url)
+    file = Util.path_leaf(url)
     # print(file_)
     abs_file_path = input_local_root + file
     # print(abs_file_path)

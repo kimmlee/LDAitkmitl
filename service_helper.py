@@ -32,13 +32,12 @@ def is_downloadable(url):
 def send_heartbeat(worker_id):
 
     if "EXPRESS_HOST" in os.environ:
-        api_url = "http://"+os.environ["EXPRESS_HOST"]+":3000/health/worker"
+        api_url = "http://"+os.environ["EXPRESS_HOST"]+":3000/api/health/worker"
     else:
         api_url = "http://queueing-express:3000/health/worker"
     try:
         session.post(api_url, json={"worker_id": worker_id})
     except Exception as error:
-        print(" [HEARTBEAT] Fail to notify Core API. Trying again in 5 sec.")
         time.sleep(5)
 
 
@@ -57,11 +56,11 @@ def filename_from_request(project_id):
 
 def send_progress(id, code, payload=None, keep=False, data=None, files=None):
     progress_payload = {'id': id, 'code': code, 'keep': keep}
-    print("[Send Progress] => ", end="")
+    print(" |-[Send Progress] => ", end="")
     print(progress_payload)
 
     if "EXPRESS_HOST" in os.environ:
-        api_url = "http://"+os.environ["EXPRESS_HOST"]+":3000/progress"
+        api_url = "http://"+os.environ["EXPRESS_HOST"]+":3000/api/progress"
     else:
         api_url = "http://queueing-express:3000/progress"
 
@@ -82,7 +81,7 @@ def send_progress(id, code, payload=None, keep=False, data=None, files=None):
                 r = session.post(api_url, progress_payload, files=files)
             sent = True
         except Exception as error:
-            print(" [Worker->API] Trying to send ...")
+            print(" |-[Bridge] Trying to send ...")
             print(error)
             time.sleep(3)
 
@@ -119,7 +118,8 @@ def get_status_message(status_code):
         '410': "{} is not downloadable",
 
         '510': "input dataset failed on document {}",
-        "601": "document download process is failed due to unreachable url(s)"
+        "601": "document download process is failed due to unreachable url(s)",
+        "602": "duplicated urls were found on the payload"
     }
 
     return statuses.get(str(status_code), "Unknown Error")
