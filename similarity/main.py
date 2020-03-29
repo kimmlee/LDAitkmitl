@@ -6,7 +6,7 @@ import os
 import urllib.request
 from Util import Util
 
-# define a local root to save files
+# define a input local root 
 
 # input_local_root = '/Users/Kim/Documents/trf_dir/TestDownloadFiles/ori/'
 input_local_root = '/Users/dhanamon/LDAitkmitl/document/TestDownloadFiles/ori/'
