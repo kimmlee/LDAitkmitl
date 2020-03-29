@@ -170,6 +170,7 @@ class LDAModeling:
     def perform_topic_modeling(self, id, project_id, project_name, input_local_root, files, titles, converted_local_root,
                                output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file, undownloadable_documents,
                                max_no_topic = 10, is_short_words_removed = True):
+        
 
         print("========== PART 1 : Input Files ==========")
         send_progress(id=id, code="110", keep=True)
@@ -177,6 +178,7 @@ class LDAModeling:
         num_doc = len(titles)
 
         print("========== PART 2 : Data Preparation and Creating Word Tokenization ==========")
+<<<<<<< HEAD
 
         if len(data) == 0 and len(titles) == 0:
             print("[E] Data is not well prepared. Canceling this job...")
@@ -189,6 +191,34 @@ class LDAModeling:
             return
 
         send_progress(id=id, code="120", keep=True)
+=======
+        if len(data) == 0 and len(titles) == 0:
+            result = {
+                "project_id":None,
+                "success":False,
+                "errorMessage":None,
+                "topic_chart_url": output_dir + pyLDAvis_output_file,
+                "term_topic_matrix":None,
+                "document_topic_matrix":None,
+                "topic_stat":None,
+                "term_pairs":None,
+                "unreadable_documents":unreadable_docs
+            }
+            return result
+        if len(data) != len(titles):
+            result = {
+                "project_id":None,
+                "success":False,
+                "errorMessage":None,
+                "topic_chart_url": output_dir + pyLDAvis_output_file,
+                "term_topic_matrix":None,
+                "document_topic_matrix":None,
+                "topic_stat":None,
+                "term_pairs":None,
+                "unreadable_documents":unreadable_docs
+            }
+            return result
+>>>>>>> upstream/master
 
         # Set data into dataframe type
         data_df = self.to_dataframe(data, titles)
@@ -306,6 +336,8 @@ class LDAModeling:
 
         result = {
             "project_id": project_id,
+            "success":True,
+            "errorMessage":None,
             "topic_chart_url": topic_chart_url,
             "term_topic_matrix": topic_term_dist,
             "document_topic_matrix": doc_topic_dist,
