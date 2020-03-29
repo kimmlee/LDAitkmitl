@@ -170,12 +170,40 @@ class LDAModeling:
     def perform_topic_modeling(self, project_name, input_local_root, files, titles, converted_local_root,
                                output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
                                max_no_topic = 10, is_short_words_removed = True):
+        
 
         print("========== PART 1 : Input Files ==========")
         data, unreadable_docs = Util.filter_file_to_read(input_local_root, files, converted_local_root)
         num_doc = len(titles)
 
         print("========== PART 2 : Data Preparation and Creating Word Tokenization ==========")
+        if len(data) == 0 and len(titles) == 0:
+            result = {
+                "project_id":None,
+                "success":False,
+                "errorMessage":None,
+                "topic_chart_url": output_dir + pyLDAvis_output_file,
+                "term_topic_matrix":None,
+                "document_topic_matrix":None,
+                "topic_stat":None,
+                "term_pairs":None,
+                "unreadable_documents":unreadable_docs
+            }
+            return result
+        if len(data) != len(titles):
+            result = {
+                "project_id":None,
+                "success":False,
+                "errorMessage":None,
+                "topic_chart_url": output_dir + pyLDAvis_output_file,
+                "term_topic_matrix":None,
+                "document_topic_matrix":None,
+                "topic_stat":None,
+                "term_pairs":None,
+                "unreadable_documents":unreadable_docs
+            }
+            return result
+
         # Set data into dataframe type
         data_df = self.to_dataframe(data, titles)
         data_df.head()
@@ -281,6 +309,8 @@ class LDAModeling:
 
         result = {
             "project_id":None,
+            "success":True,
+            "errorMessage":None,
             "topic_chart_url": output_dir + pyLDAvis_output_file,
             "term_topic_matrix":topic_term_dist,
             "document_topic_matrix":doc_topic_dist,

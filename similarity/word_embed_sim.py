@@ -86,9 +86,34 @@ class WordEmbeddedSimilarity:
 
             data, unreadable_docs = Util.find_read_file(doc_path_dict, converted_local_root, unreadable_docs)
             num_doc = len(data)
+            num_title = len(doc_path_dict)
             # print(num_doc)
 
             print("========== PART 2 : Data Preparation ==========")
+            if num_doc == 0 and num_title == 0:
+                word_em_sim = {
+                    "project_id":project_id,
+                    "project_name":project_name,
+                    "success":False,
+                    "errorMessage":None,
+                    "similarity_type":0,
+                    "topic_similarity": None,
+                    "undownload_docs":undownload_docs,
+                    "unreadable_docs":unreadable_docs
+                }
+                return word_em_sim
+            if num_doc != num_title:
+                word_em_sim = {
+                    "project_id":project_id,
+                    "project_name":project_name,
+                    "success":False,
+                    "errorMessage":None,
+                    "similarity_type":0,
+                    "topic_similarity": None,
+                    "undownload_docs":undownload_docs,
+                    "unreadable_docs":unreadable_docs
+                }
+                return word_em_sim
             # Set data into dataframe type
             data_df = WordEmbeddedSimilarity.to_dataframe(data, doc_path_dict)
             # data_df.head()
@@ -132,7 +157,9 @@ class WordEmbeddedSimilarity:
         word_em_sim = {
             "project_id":project_id,
             "project_name":project_name,
-            "similarity_type":"Word Embedding Similarity",
+            "success":True,
+            "errorMessage":None,
+            "similarity_type":1,
             "topic_similarity": topic_sim,
             "undownload_docs":undownload_docs,
             "unreadable_docs":unreadable_docs

@@ -66,7 +66,33 @@ class BagOfWordSimilarity:
             # for key in data.keys():
             #     print(key)
             num_doc = len(data)
+            num_title = len(doc_path_dict)
             print("========== PART 2 : Data Preparation ==========")
+            if num_doc == 0 and num_title == 0:
+                bag_of_word_sim = {
+                    "project_id":project_id,
+                    "project_name":project_name,
+                    "success":False,
+                    "errorMessage":None,
+                    "similarity_type":0,
+                    "topic_similarity": None,
+                    "undownload_docs":undownload_docs,
+                    "unreadable_docs":unreadable_docs
+                }
+                return bag_of_word_sim
+            if num_doc != num_title:
+                bag_of_word_sim = {
+                    "project_id":project_id,
+                    "project_name":project_name,
+                    "success":False,
+                    "errorMessage":None,
+                    "similarity_type":0,
+                    "topic_similarity": None,
+                    "undownload_docs":undownload_docs,
+                    "unreadable_docs":unreadable_docs
+                }
+                return bag_of_word_sim
+
             data_df = BagOfWordSimilarity.to_dataframe(data, doc_path_dict)
             # data_df.head()
             print(data_df)
@@ -127,7 +153,9 @@ class BagOfWordSimilarity:
         bag_of_word_sim = {
             "project_id":project_id,
             "project_name":project_name,
-            "similarity_type":"Bag of word similarity",
+            "success":True,
+            "errorMessage":None,
+            "similarity_type":0,
             "topic_similarity": topic_sim,
             "undownload_docs":undownload_docs,
             "unreadable_docs":unreadable_docs

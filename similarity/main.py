@@ -24,6 +24,7 @@ for request in request_dict:
 
 project_id = request['project_id']
 project_name = request['project_name']
+criteria = request['criteria']
 
 print('========== Beginning file download with urllib2. ==========')
 # to_process_files = []
@@ -51,14 +52,13 @@ for doc_id, document in documents.items():
         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
         doc_path_dict_[doc_id] = abs_file_path
 
-# bag_of_word_sim = BagOfWordSimilarity.similarity(input_local_root,converted_local_root,streategy_local_root,doc_path_dict_,project_id,project_name,undownload_docs)
-# # print(bag_of_word_sim)
 
-# with open('bag_of_word_sim.json', 'w', encoding='utf-8') as outfile:
-#     json.dump(str(bag_of_word_sim), outfile, ensure_ascii=False, indent=4)
+if criteria == 0:
+    sim = BagOfWordSimilarity.similarity(input_local_root,converted_local_root,streategy_local_root,doc_path_dict_,project_id,project_name,undownload_docs)
+    filename = "bag_of_word_sim.json"
+elif criteria == 1:
+    sim = WordEmbeddedSimilarity.similarity(input_local_root,converted_local_root,streategy_local_root,doc_path_dict_,project_id,project_name,undownload_docs)
+    filename = "word_em_sim.json"
 
-
-word_em_sim = WordEmbeddedSimilarity.similarity(input_local_root,converted_local_root,streategy_local_root,doc_path_dict_,project_id,project_name,undownload_docs)
-
-with open('word_em_sim.json', 'w', encoding='utf-8') as outfile:
-    json.dump(str(word_em_sim), outfile, ensure_ascii=False, indent=4)
+with open(filename, 'w', encoding='utf-8') as outfile:
+    json.dump(str(sim), outfile, ensure_ascii=False, indent=4)
