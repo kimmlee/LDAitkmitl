@@ -19,29 +19,31 @@ import json
 # todo change these three variables
 # define a local root to save files
 
-input_local_root = '/Users/Kim/Documents/trf_dir/TestDownloadFiles/ori/'
+# input_local_root = '/Users/Kim/Documents/trf_dir/TestDownloadFiles/ori/'
 # input_local_root = '/Users/dhanamon/LDAitkmitl/TestDownloadFiles/'
+input_local_root = '/Users/dhanamon/Google Drive/TRF_Y61_Mon/05012020_Topic modeling/document/TestDownloadFiles/ori/'
 
-converted_local_root = '/Users/Kim/Documents/trf_dir/TestDownloadFiles/converted/'
+# converted_local_root = '/Users/Kim/Documents/trf_dir/TestDownloadFiles/converted/'
+converted_local_root = '/Users/dhanamon/Google Drive/TRF_Y61_Mon/05012020_Topic modeling/document/TestDownloadFiles/converted/'
 
 
 # define an output directory to save an 'original' pyLDAvis html file
-output_dir = '/Users/Kim/Documents/trf_dir/PyLDAVizOutput/'
-# output_dir = '/Users/dhanamon/LDAitkmitl/PyLDAVizOutput/'
+# output_dir = '/Users/Kim/Documents/trf_dir/PyLDAVizOutput/'
+output_dir = '/Users/dhanamon/LDAitkmitl/PyLDAVizOutput/'
 # define an output directory to save an 'original' pyLDAvis html file
 pyLDAvis_output_file = '3pdf_LDAvis_newmm_2n_postag_title_10n.html'
 
 # define an output directory to save an 'thai' pyLDAvis html file
-th_output_dir = '/Users/Kim/Documents/trf_dir/PyLDAVizOutput/th/'
-# th_output_dir = '/Users/dhanamon/LDAitkmitl/PyLDAVizOutput/th/'
+# th_output_dir = '/Users/Kim/Documents/trf_dir/PyLDAVizOutput/th/'
+th_output_dir = '/Users/dhanamon/LDAitkmitl/PyLDAVizOutput/th/'
 # define an output directory to save an 'thai' pyLDAvis html file
 th_pyLDAvis_output_file = 'th_3pdf_LDAvis_newmm_2n_postag_title_10n.html'
 
 urls = [
         # 'https://elibrary.trf.or.th/fullP/SRI61X0602/SRI61X0602_full.pdf',
         'https://elibrary.trf.or.th/fullP/RDG6240001/RDG6240001_full.pdf',
-        'https://elibrary.trf.or.th/fullP/RDG60T0025V01/unread_RDG60T0025V01_full.pdf',
-        'https://elibrary.trf.or.th/fullP/SRI5851205/unread_SRI5851205_full.pdf',
+        # 'https://elibrary.trf.or.th/fullP/RDG60T0025V01/unread_RDG60T0025V01_full.pdf',
+        # 'https://elibrary.trf.or.th/fullP/SRI5851205/unread_SRI5851205_full.pdf',
         'https://elibrary.trf.or.th/fullP/RDG6210003/RDG6210003_full.pdf',
         # 'https://elibrary.trf.or.th/fullP/RDG6140033/RDG6140033_full.pdf',
         # 'https://elibrary.trf.or.th/fullP/RDG6140024/RDG6140024_full.pdf',
@@ -65,8 +67,8 @@ urls = [
 titles = [
             # 'การศึกษาวิเคราะห์การทุจริตคอร์รัปชันของขบวนการเครือข่ายนายหน้าข้ามชาติในอุตสาหกรรมประมงต่อเนื่องของประเทศไทย',
             'นวัตกรรมเพื่อพัฒนาท้องถิ่นตามแนวทางปรัชญาของเศรษฐกิจพอเพียง: กรณีศึกษาองค์กรปกครองส่วนท้องถิ่นในจังหวัดนครสวรรค์และอุทัยธานี',
-            'แผนงานวิจัย กลยุทธ์การเพิ่มขีดความสามารถการบริการการท่องเที่ยว เชิงส่งเสริมสุขภาพ ในจังหวัดภูเก็ต',
-            'โครงการวิจัยเชงินโยบาย เพื่อยกระดับอุตสาหกรรมยานยนต์สีเขียวในประเทศไทย',
+            # 'แผนงานวิจัย กลยุทธ์การเพิ่มขีดความสามารถการบริการการท่องเที่ยว เชิงส่งเสริมสุขภาพ ในจังหวัดภูเก็ต',
+            # 'โครงการวิจัยเชงินโยบาย เพื่อยกระดับอุตสาหกรรมยานยนต์สีเขียวในประเทศไทย',
             'การศึกษาผลประโยชน์ทางธุรกิจที่เกิดจากการนำเศษพลอยมาใช้ประโยชน์ในเชิงพาณิชย์มากขึ้น',
             # 'การศึกษาประสบการณ์การเรียนรู้ของเยาวชนกลุ่มชาติพันธุ์ในการสร้างความรู้ด้านนิเวศวัฒนธรรม ',
             # 'การวิจัยและพัฒนากระบวนการผลิตและพัฒนาครูโดยบูรณาการแนวคิดจิตตปัญญาศึกษา ระบบพี่เลี้ยง และการวิจัยเป็นฐานของคณะครุศาสตร์ มหาวิทยาลัยราชภัฏ ปีที่ 2',
@@ -87,31 +89,76 @@ titles = [
             # 'โครงการศึกษาผลกระทบด้านขยะและน้ำเสียบริเวณพื้นที่เขตชายแดนบ้านคลองลึก อำเภออรัญประเทศ จังหวัดสระแก้ว    '
             ]
 
-with open('json_request_small.json', 'r') as f:
-    request_dict = json.load(f)
-
-# with open('json_request.json', 'r') as f:
+# with open('json_request_small.json', 'r') as f:
 #     request_dict = json.load(f)
 
-# print(json.dumps(request_dict, indent=4, sort_keys=True))
+# # with open('json_request.json', 'r') as f:
+# #     request_dict = json.load(f)
 
-for request in request_dict:
-    documents = request['documents']
+# # print(json.dumps(request_dict, indent=4, sort_keys=True))
 
-project_id = request['project_id']
-project_name = request['project_name']
-max_no_topic = request['max_no_topic']
+# for request in request_dict:
+#     documents = request['documents']
+
+# project_id = request['project_id']
+# project_name = request['project_name']
+# max_no_topic = request['max_no_topic']
+
+# print('========== Beginning file download with urllib2. ==========')
+# to_process_files = []
+# to_process_titles = []
+# undownload_docs = []
+# for doc_id, document in documents.items():
+#     # print('document id: {0}'.format(doc_id))
+#     # print(document)
+
+#     url = document['url']
+#     file = Util.path_leaf(url)
+#     abs_file_path =  input_local_root + file
+#     # print(abs_file_path)
+
+#     if not os.path.isfile(abs_file_path):
+#         try:
+#             print('downloading file from this url: \"{0}\" with this file name : \"{1}\".'.format(url, file))
+#             urllib.request.urlretrieve(url, abs_file_path)
+
+#             to_process_files.append(file)
+#             to_process_titles.append(document['title'])
+#         except:
+#             print('An exception occurred when downloading a file from this url, \"{0}\"'.format(url))
+#             # Record this document that cannot be downloaded in an error list.
+#             undownload_docs.append(doc_id)
+#     else:
+#         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
+
+#         to_process_files.append(file)
+#         to_process_titles.append(document['title'])
+
+
+
+# # print('========================')
+# # print(documents)
+
+# ldamodeling = LDAModeling()
+# result = ldamodeling.perform_topic_modeling(project_name, input_local_root, to_process_files, to_process_titles, converted_local_root,
+#                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
+#                                    max_no_topic)
+
+# result['project_id'] = project_id
+# result['undownloadable_documents'] = undownload_docs
+
+# with open('result.json', 'w', encoding='utf-8') as outfile:
+#     json.dump(str(result), outfile, ensure_ascii=False, indent=4)
+
+max_no_topic = 10
 
 print('========== Beginning file download with urllib2. ==========')
 to_process_files = []
-to_process_titles = []
-undownload_docs = []
-for doc_id, document in documents.items():
-    # print('document id: {0}'.format(doc_id))
-    # print(document)
-
-    url = document['url']
+counter = 0
+#print(len(urls), len(titles))
+for url in urls:
     file = Util.path_leaf(url)
+    # print(file_)
     abs_file_path =  input_local_root + file
     # print(abs_file_path)
 
@@ -119,62 +166,29 @@ for doc_id, document in documents.items():
         try:
             print('downloading file from this url: \"{0}\" with this file name : \"{1}\".'.format(url, file))
             urllib.request.urlretrieve(url, abs_file_path)
-
-            to_process_files.append(file)
-            to_process_titles.append(document['title'])
         except:
             print('An exception occurred when downloading a file from this url, \"{0}\"'.format(url))
-            # Record this document that cannot be downloaded in an error list.
-            undownload_docs.append(doc_id)
+            # Delete the title of a file that cannot be downloaded at a specific index.
+            # This is to keep two lists of to_process_files and titles consistent.
+            del titles[counter]
     else:
         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
+    to_process_files.append(file)
+    counter += 1
 
-        to_process_files.append(file)
-        to_process_titles.append(document['title'])
-
-
-
-# print('========================')
-# print(documents)
+project_name = "โครงการวิเคราะห์ xxx"
 
 ldamodeling = LDAModeling()
-result = ldamodeling.perform_topic_modeling(project_name, input_local_root, to_process_files, to_process_titles, converted_local_root,
-                                   output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
-                                   max_no_topic)
-
-result['project_id'] = project_id
-result['undownloadable_documents'] = undownload_docs
-
-with open('result.json', 'w', encoding='utf-8') as outfile:
-    json.dump(str(result), outfile, ensure_ascii=False, indent=4)
-
-# max_no_topic = 10
-#
-# print('========== Beginning file download with urllib2. ==========')
-# to_process_files = []
-# counter = 0
-# #print(len(urls), len(titles))
-# for url in urls:
-#     file = Util.path_leaf(url)
-#     # print(file_)
-#     abs_file_path =  input_local_root + file
-#     # print(abs_file_path)
-#
-#     if not os.path.isfile(abs_file_path):
-#         try:
-#             print('downloading file from this url: \"{0}\" with this file name : \"{1}\".'.format(url, file))
-#             urllib.request.urlretrieve(url, abs_file_path)
-#         except:
-#             print('An exception occurred when downloading a file from this url, \"{0}\"'.format(url))
-#             # Delete the title of a file that cannot be downloaded at a specific index.
-#             # This is to keep two lists of to_process_files and titles consistent.
-#             del titles[counter]
-#     else:
-#         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
-#     to_process_files.append(file)
-#     counter += 1
-#
-# ldamodeling = LDAModeling()
 # ldamodeling.perform_topic_modeling(input_local_root, to_process_files, titles, converted_local_root,
 #                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
 #                                    max_no_topic)
+
+result = ldamodeling.perform_topic_modeling(project_name, input_local_root, to_process_files, titles, converted_local_root,
+                                   output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
+                                   max_no_topic)
+
+# result['project_id'] = project_id
+# result['undownloadable_documents'] = undownload_docs
+
+with open('result.json', 'w', encoding='utf-8') as outfile:
+    json.dump(str(result), outfile, ensure_ascii=False, indent=4)

@@ -1,5 +1,10 @@
 FinalReport_Sample/*
-TestDownloadFiles/*
-__pycache__/*
+TestDownloadFiles/
+__pycache__/
 PDFreader/__pycache__/*
 jpype/__pycache__/*
+topic_term_dist_6
+topic_term_dist
+term_dist_topic
+.DS_Store
+

@@ -1,83 +1,160 @@
+import math
+import numpy as np
+# from __future__ import absolute_import
+import funcy as fp
+import pandas as pd
+from joblib import Parallel, delayed, cpu_count
+from scipy.stats import entropy
+from scipy.spatial.distance import pdist, squareform
+from scipy.sparse import issparse
+from past.builtins import xrange, basestring
+import gensim
+from collections import namedtuple
+import json
+import logging
+
 
 class TextDistribution:
 
     @staticmethod
-    def topicTerm_dist(dic,corpus,topic_term_dist, term_dist_topic):
-        #lambda = 1.0
-        term_dist_topic = dict(term_dist_topic)
-        for x in term_dist_topic:
+    def topicTerm_dist(ldamodel, corpus):
+        """
+        Topic-Term Distribution
+        define lambda = 0.6
+        """
+        extract_data = TextDistribution._extract_data(ldamodel, corpus, dictionary=ldamodel.id2word)
+        topic_term_dists = TextDistribution._df_with_names(extract_data['topic_term_dists'], 'topic', 'term')
+        doc_topic_dists  = TextDistribution._df_with_names(extract_data['doc_topic_dists'], 'doc', 'topic')
+        term_frequency   = TextDistribution._series_with_name(extract_data['term_frequency'], 'term_frequency')
+        doc_lengths      = TextDistribution._series_with_name(extract_data['doc_lengths'], 'doc_length')
+        vocab            = TextDistribution._series_with_name(extract_data['vocab'], 'vocab')
+        topic_freq       = (doc_topic_dists.T * doc_lengths).T.sum()
+        topic_proportion = (topic_freq / topic_freq.sum()).sort_values(ascending=False)
+        topic_list = list(topic_proportion.index)
+        term_proportion = term_frequency / term_frequency.sum()
+        log_lift = np.log(topic_term_dists / term_proportion)
+        log_ttd = np.log(topic_term_dists)
+        topic_term_dist = TextDistribution._find_relevance(topic_list, vocab,log_ttd, log_lift, 1000, lambda_=0.6)
+         
+        return topic_term_dist
+    
+    @staticmethod
+    def _extract_data(topic_model, corpus, dictionary, doc_topic_dists=None):
+
+        if not gensim.matutils.ismatrix(corpus):
+            corpus_csc = gensim.matutils.corpus2csc(corpus, num_terms=len(dictionary))
+        else:
+            corpus_csc = corpus
+            # Need corpus to be a streaming gensim list corpus for len and inference functions below:
+            corpus = gensim.matutils.Sparse2Corpus(corpus_csc)
+
+        vocab = list(dictionary.token2id.keys())
+        # TODO: add the hyperparam to smooth it out? no beta in online LDA impl.. hmm..
+        # for now, I'll just make sure we don't ever get zeros...
+        beta = 0.01
+        fnames_argsort = np.asarray(list(dictionary.token2id.values()), dtype=np.int_)
+        term_freqs = corpus_csc.sum(axis=1).A.ravel()[fnames_argsort]
+        term_freqs[term_freqs == 0] = beta
+        doc_lengths = corpus_csc.sum(axis=0).A.ravel()
+        
+        assert term_freqs.shape[0] == len(dictionary), 'Term frequencies and dictionary have different shape {} != {}'.format(term_freqs.shape[0], len(dictionary))
+        assert doc_lengths.shape[0] == len(corpus), 'Document lengths and corpus have different sizes {} != {}'.format(doc_lengths.shape[0], len(corpus))
+        
+        if hasattr(topic_model, 'lda_alpha'):
+            num_topics = len(topic_model.lda_alpha)
+        else:
+            num_topics = topic_model.num_topics
+            
+        if doc_topic_dists is None:
+            # If its an HDP model.
+            if hasattr(topic_model, 'lda_beta'):
+                gamma = topic_model.inference(corpus)
+            else:
+                gamma, _ = topic_model.inference(corpus)
+            doc_topic_dists = gamma / gamma.sum(axis=1)[:, None]
+        else:
+            if isinstance(doc_topic_dists, list):
+                doc_topic_dists = gensim.matutils.corpus2dense(doc_topic_dists, num_topics).T
+            elif issparse(doc_topic_dists):
+                doc_topic_dists = doc_topic_dists.T.todense()
+            doc_topic_dists = doc_topic_dists / doc_topic_dists.sum(axis=1)
+
+        assert doc_topic_dists.shape[1] == num_topics, 'Document topics and number of topics do not match {} != {}'.format(doc_topic_dists.shape[1], num_topics)
+        # get the topic-term distribution straight from gensim without
+        # iterating over tuples
+        
+        if hasattr(topic_model, 'lda_beta'):
+            topic = topic_model.lda_beta
+        else:
+            topic = topic_model.state.get_lambda()
+        topic = topic / topic.sum(axis=1)[:, None]
+        topic_term_dists = topic[:, fnames_argsort]
+        
+        assert topic_term_dists.shape[0] == doc_topic_dists.shape[1]
+        
+        return {'topic_term_dists': topic_term_dists, 'doc_topic_dists': doc_topic_dists,
+            'doc_lengths': doc_lengths, 'vocab': vocab, 'term_frequency': term_freqs}
+    @staticmethod
+    def _df_with_names(data, index_name, columns_name):
+        if type(data) == pd.DataFrame:
+            # we want our index to be numbered
+            df = pd.DataFrame(data.values)
+        else:
+            df = pd.DataFrame(data)
+        df.index.name = index_name
+        df.columns.name = columns_name
+        return df
+
+    @staticmethod
+    def _series_with_name(data, name):
+        if type(data) == pd.Series:
+            data.name = name
+            # ensures a numeric index
+            return data.reset_index()[name]
+        else:
+            return pd.Series(data, name=name)
+
+    @staticmethod
+    def _find_relevance(topic_list, vocab,log_ttd, log_lift, R=1000, lambda_=0.6):
+        relevance = lambda_ * log_ttd + (1 - lambda_) * log_lift
+        id_ = relevance.T.apply(lambda s: s.sort_values(ascending=False).index).head(R)
+        relevance_ = relevance.T.apply(lambda s: s.sort_values(ascending=False).values).head(R)
+
+        topic_term_dist = []
+        x=0
+        for num_topic in topic_list:
             term_list = []
-            for num_word in range(len(term_dist_topic[0])):
-                term_name = term_dist_topic[x][num_word][0]
-                score = term_dist_topic[x][num_word][1]
-                term = {"term":term_name,
-                        "score":score}
+            for num_term in range(len(id_)):
+                vocab_ = vocab[id_[num_topic][num_term]]
+                r_score =  relevance_[num_topic][num_term]
+                term = {"term":vocab_,
+                        "score":r_score}
                 # ----- start water mask -----
-                if num_word in [177,288,399]:
-                    score_next = term_dist_topic[x][num_word+1][1]
-                    score_wm = ((score - score_next)/2)+score_next
-                    if num_word == 177:
+                if num_term in [177,288,399]:
+                    score_next = relevance_[num_topic][num_term+1]
+                    score_wm = ((r_score - score_next)/2)+score_next
+                    if num_term == 177:
                         term_name_wm = "คิมม"
-                    elif num_word == 288:
+                    elif num_term == 288:
                         term_name_wm = "มนน"
-                    elif num_word == 399:
+                    elif num_term == 399:
                         term_name_wm = "แซมม"
                     # append water mask
                     term_wm = {"term":term_name_wm,
                         "score":score_wm}
                     term_list.append(term_wm)
                 # delete last three words
-                if num_word not in [998,999,1000]:
+                if num_term not in [998,999,1000]:
                     term_list.append(term)
                 # ----- end water mask -----
             # add topic-term to list
             topic_term = {"topic_id":x,
                         "terms":term_list}
             topic_term_dist.append(topic_term)
-        
-        #lambda = 0.6
-        _lambda = 0.6
-        topic_term_dist_6 = []
-        for topic in topic_term_dist:
-            term_list = topic['terms']
-            new_term_list = []
-            # print(term_list)
-            for term in term_list:
-                term_name = term['term']
-                term_score = term['score']
-                if term_name in ["คิมม","มนน","แซมม"]:
-                    new_term_score = term_score
-                else:
-                    term_id = dic[term_name]
-                    prob_w = TextDistribution.prob_word(corpus, term_id)
-                    prob_w_t = term_score
-                    new_term_score = (_lambda * prob_w_t) + ((1 - _lambda)*(prob_w_t/prob_w))
-                new_term = {
-                    "term":term_name,
-                    "score":new_term_score
-                }
-                new_term_list.append(new_term)
-            new_term_list = sorted(new_term_list, key=lambda i: i['score'], reverse=True)
-            print(new_term_list)  
-            topic_term = {"topic_id":topic['topic_id'],
-                        "terms":new_term_list}
-            topic_term_dist_6.append(topic_term)
-
-         
-        return topic_term_dist_6
-
-    @staticmethod
-    def prob_word(corpus, term_id):
-        corpus_list = []
-        for cp in corpus:
-            for word in cp:
-                corpus_list.append(word)
-        sum_ = sum(dict(corpus_list).values())
-        tfi = dict(corpus_list)[term_id]
-        # print(tfi, sum_)
-        prob_w = tfi/sum_
-        # print(prob_w)
-        return prob_w
+            x+=1
+            print('-'*20)
+        # print(topic_term_dist)
+        return topic_term_dist  
 
     @staticmethod
     def document_dist(doc_id, title, text, id_ ,dictionary2,ldamodel,doc_topic_dist):
@@ -208,18 +285,18 @@ class TextDistribution:
     def compute_term_pairs(topic_term_dist, no_top_terms = 30):
         term_pairs = []
         max_cooccurence_score = 0
-        print(topic_term_dist)
-        print("No of Topics: {0}".format(len(topic_term_dist)))
+        # print(topic_term_dist)
+        # print("No of Topics: {0}".format(len(topic_term_dist)))
         for each_term_topic_1 in topic_term_dist:
             topic_id_1 = each_term_topic_1['topic_id']
-            print("topic id 1: {0}".format(topic_id_1))
+            # print("topic id 1: {0}".format(topic_id_1))
 
             for each_term_topic_2 in topic_term_dist:
                 topic_id_2 = each_term_topic_2['topic_id']
 
                 # compare terms from two different topics as half (triangle) matrix regardless of the same number of topic_id
                 if (int(topic_id_1) < int(topic_id_2)):
-                    print("topic id 2: {0}".format(topic_id_2))
+                    # print("topic id 2: {0}".format(topic_id_2))
 
                     terms_1 = each_term_topic_1['terms']
                     for i in range(min(len(terms_1), no_top_terms)):
@@ -253,7 +330,7 @@ class TextDistribution:
 
         # print("+++++++++++++after sorting+++++++++++++")
         sorted_term_pairs = sorted(term_pairs, key=lambda i: i['cooccur_score'], reverse=True)
-        print(sorted_term_pairs)
+        # print(sorted_term_pairs)
 
         counter = 0
         for term_pair in sorted_term_pairs:

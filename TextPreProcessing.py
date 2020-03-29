@@ -47,7 +47,8 @@ class TextPreProcessing:
         #Word stemming
     #     stemmed_tokens = [PorterStemmer().stem(i) for i in stopped_tokens]
         #Remove ETC
-        deletelist = [' ','  ','   ', '    ', '\n', '\xa0','\x0c', "'",'cid']
+        deletelist = [' ','  ','   ', '    ','     ','      ','       ','                                ', \
+            '        ','\n', '\xa0','\x0c', "'",'cid']
         tokens = [i for i in stopped_tokens if not i in deletelist]
 
         return tokens

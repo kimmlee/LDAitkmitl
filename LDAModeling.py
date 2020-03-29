@@ -227,7 +227,7 @@ class LDAModeling:
             max_no_topic = 2
 
         ldamodel = self.LDAmodel(dictionary2, corpus2, max_no_topic)
-        term_dist_topic = ldamodel.show_topics(max_no_topic, 1000, log=True, formatted=False)
+        term_dist_topic = ldamodel.show_topics(num_topics=max_no_topic, num_words=1000, log=True, formatted=False)
         # print(term_dist_topic)
         # handle1=open('term_dist_topic','a+')
         # handle1.write(str(term_dist_topic))
@@ -239,33 +239,33 @@ class LDAModeling:
         topic_term_dist = []
         # print(dictionary2['ทุจริต'])
         # print(dictionary2)
-        topic_term_dist = TextDistribution.topicTerm_dist(dict_2,corpus2,topic_term_dist, term_dist_topic)
-        print(topic_term_dist)
-        # handle1=open('topic_term_dist','a+')
-        # handle1.write(str(topic_term_dist))
-        # handle1.write("\n")
-        # handle1.close()
+        topic_term_dist = TextDistribution.topicTerm_dist(ldamodel, corpus2)
+        # print(topic_term_dist)
+        handle1=open('topic_term_dist_6','a+')
+        handle1.write(str(topic_term_dist))
+        handle1.write("\n")
+        handle1.close()
 
         print("========== PART 4-1 : Document-topic (all) distribution ==========")
         ### Doc_topic_all_dist
         doc_topic_dist = []
         doc_topic_dist = TextDistribution.docTopic_dist(doc_topic_dist, data_df, num_doc, inp_list,dictionary2,ldamodel)
-        print(doc_topic_dist)
+        # print(doc_topic_dist)
 
         print("========== PART 4-2 : Document-topic (min) distribution ==========")
         ### Doc_topic_min_dist
         n_doc_intopic = []
         n_doc_intopic = TextDistribution.Ndoc_topic(n_doc_intopic,num_doc, data_df, inp_list, dictionary2, ldamodel)
-        print(n_doc_intopic)
+        # print(n_doc_intopic)
 
-        print("========== PART 5 : Evaluate Model ==========")
-        # Evaluate
-        lda_coherence = CoherenceModel(ldamodel, corpus=corpus2, dictionary=dictionary2, coherence='u_mass')
-        print(lda_coherence.get_coherence_per_topic())
-        print("LDA umass score = %.4f" % (lda_coherence.get_coherence()))
+        # print("========== PART 5 : Evaluate Model ==========")
+        # # Evaluate
+        # lda_coherence = CoherenceModel(ldamodel, corpus=corpus2, dictionary=dictionary2, coherence='u_mass')
+        # print(lda_coherence.get_coherence_per_topic())
+        # # print("LDA umass score = %.4f" % (lda_coherence.get_coherence()))
 
-        lda_coherence = CoherenceModel(ldamodel, texts=new_lists, dictionary=dictionary2, coherence='c_uci')
-        print("LDA uci score = %.4f" % (lda_coherence.get_coherence()))
+        # lda_coherence = CoherenceModel(ldamodel, texts=new_lists, dictionary=dictionary2, coherence='c_uci')
+        # # print("LDA uci score = %.4f" % (lda_coherence.get_coherence()))
 
         print("========== PART 6 : Export pyLDAvis HTML ==========")
         # pyLDAvis.enable_notebook()
@@ -277,7 +277,7 @@ class LDAModeling:
 
         print("========== PART 8 : Word/Term Pair Similairty==========")
         terms_pairs = TextDistribution.compute_term_pairs(topic_term_dist, self.no_top_terms)
-        print(terms_pairs)
+        # print(terms_pairs)
 
         result = {
             "project_id":None,
