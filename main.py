@@ -89,76 +89,31 @@ titles = [
             # 'โครงการศึกษาผลกระทบด้านขยะและน้ำเสียบริเวณพื้นที่เขตชายแดนบ้านคลองลึก อำเภออรัญประเทศ จังหวัดสระแก้ว    '
             ]
 
-# with open('json_request_small.json', 'r') as f:
+with open('json_request_small.json', 'r') as f:
+    request_dict = json.load(f)
+
+# with open('json_request.json', 'r') as f:
 #     request_dict = json.load(f)
 
-# # with open('json_request.json', 'r') as f:
-# #     request_dict = json.load(f)
+# print(json.dumps(request_dict, indent=4, sort_keys=True))
 
-# # print(json.dumps(request_dict, indent=4, sort_keys=True))
+for request in request_dict:
+    documents = request['documents']
 
-# for request in request_dict:
-#     documents = request['documents']
-
-# project_id = request['project_id']
-# project_name = request['project_name']
-# max_no_topic = request['max_no_topic']
-
-# print('========== Beginning file download with urllib2. ==========')
-# to_process_files = []
-# to_process_titles = []
-# undownload_docs = []
-# for doc_id, document in documents.items():
-#     # print('document id: {0}'.format(doc_id))
-#     # print(document)
-
-#     url = document['url']
-#     file = Util.path_leaf(url)
-#     abs_file_path =  input_local_root + file
-#     # print(abs_file_path)
-
-#     if not os.path.isfile(abs_file_path):
-#         try:
-#             print('downloading file from this url: \"{0}\" with this file name : \"{1}\".'.format(url, file))
-#             urllib.request.urlretrieve(url, abs_file_path)
-
-#             to_process_files.append(file)
-#             to_process_titles.append(document['title'])
-#         except:
-#             print('An exception occurred when downloading a file from this url, \"{0}\"'.format(url))
-#             # Record this document that cannot be downloaded in an error list.
-#             undownload_docs.append(doc_id)
-#     else:
-#         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
-
-#         to_process_files.append(file)
-#         to_process_titles.append(document['title'])
-
-
-
-# # print('========================')
-# # print(documents)
-
-# ldamodeling = LDAModeling()
-# result = ldamodeling.perform_topic_modeling(project_name, input_local_root, to_process_files, to_process_titles, converted_local_root,
-#                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
-#                                    max_no_topic)
-
-# result['project_id'] = project_id
-# result['undownloadable_documents'] = undownload_docs
-
-# with open('result.json', 'w', encoding='utf-8') as outfile:
-#     json.dump(str(result), outfile, ensure_ascii=False, indent=4)
-
-max_no_topic = 10
+project_id = request['project_id']
+project_name = request['project_name']
+max_no_topic = request['max_no_topic']
 
 print('========== Beginning file download with urllib2. ==========')
 to_process_files = []
-counter = 0
-#print(len(urls), len(titles))
-for url in urls:
+to_process_titles = []
+undownload_docs = []
+for doc_id, document in documents.items():
+    # print('document id: {0}'.format(doc_id))
+    # print(document)
+
+    url = document['url']
     file = Util.path_leaf(url)
-    # print(file_)
     abs_file_path =  input_local_root + file
     # print(abs_file_path)
 
@@ -166,29 +121,74 @@ for url in urls:
         try:
             print('downloading file from this url: \"{0}\" with this file name : \"{1}\".'.format(url, file))
             urllib.request.urlretrieve(url, abs_file_path)
+
+            to_process_files.append(file)
+            to_process_titles.append(document['title'])
         except:
             print('An exception occurred when downloading a file from this url, \"{0}\"'.format(url))
-            # Delete the title of a file that cannot be downloaded at a specific index.
-            # This is to keep two lists of to_process_files and titles consistent.
-            del titles[counter]
+            # Record this document that cannot be downloaded in an error list.
+            undownload_docs.append(doc_id)
     else:
         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
-    to_process_files.append(file)
-    counter += 1
 
-project_name = "โครงการวิเคราะห์ xxx"
+        to_process_files.append(file)
+        to_process_titles.append(document['title'])
+
+
+
+# print('========================')
+# print(documents)
 
 ldamodeling = LDAModeling()
-# ldamodeling.perform_topic_modeling(input_local_root, to_process_files, titles, converted_local_root,
-#                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
-#                                    max_no_topic)
-
-result = ldamodeling.perform_topic_modeling(project_name, input_local_root, to_process_files, titles, converted_local_root,
+result = ldamodeling.perform_topic_modeling(project_name, input_local_root, to_process_files, to_process_titles, converted_local_root,
                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
                                    max_no_topic)
 
-# result['project_id'] = project_id
-# result['undownloadable_documents'] = undownload_docs
+result['project_id'] = project_id
+result['undownloadable_documents'] = undownload_docs
 
 with open('result.json', 'w', encoding='utf-8') as outfile:
     json.dump(str(result), outfile, ensure_ascii=False, indent=4)
+
+# max_no_topic = 10
+
+# print('========== Beginning file download with urllib2. ==========')
+# to_process_files = []
+# counter = 0
+# #print(len(urls), len(titles))
+# for url in urls:
+#     file = Util.path_leaf(url)
+#     # print(file_)
+#     abs_file_path =  input_local_root + file
+#     # print(abs_file_path)
+
+#     if not os.path.isfile(abs_file_path):
+#         try:
+#             print('downloading file from this url: \"{0}\" with this file name : \"{1}\".'.format(url, file))
+#             urllib.request.urlretrieve(url, abs_file_path)
+#         except:
+#             print('An exception occurred when downloading a file from this url, \"{0}\"'.format(url))
+#             # Delete the title of a file that cannot be downloaded at a specific index.
+#             # This is to keep two lists of to_process_files and titles consistent.
+#             del titles[counter]
+#     else:
+#         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
+#     to_process_files.append(file)
+#     counter += 1
+
+# project_name = "โครงการวิเคราะห์ xxx"
+
+# ldamodeling = LDAModeling()
+# # ldamodeling.perform_topic_modeling(input_local_root, to_process_files, titles, converted_local_root,
+# #                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
+# #                                    max_no_topic)
+
+# result = ldamodeling.perform_topic_modeling(project_name, input_local_root, to_process_files, titles, converted_local_root,
+#                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
+#                                    max_no_topic)
+
+# # result['project_id'] = project_id
+# # result['undownloadable_documents'] = undownload_docs
+
+# with open('result.json', 'w', encoding='utf-8') as outfile:
+#     json.dump(str(result), outfile, ensure_ascii=False, indent=4)
