@@ -244,7 +244,7 @@ class LDAModeling:
             max_no_topic = 2
 
         ldamodel = self.LDAmodel(dictionary2, corpus2, max_no_topic)
-        term_dist_topic = ldamodel.show_topics(max_no_topic, 1000, log=True, formatted=False)
+        term_dist_topic = ldamodel.show_topics(num_topics=max_no_topic, num_words=1000, log=True, formatted=False)
         # print(term_dist_topic)
         # handle1=open('term_dist_topic','a+')
         # handle1.write(str(term_dist_topic))
@@ -256,9 +256,9 @@ class LDAModeling:
         topic_term_dist = []
         # print(dictionary2['ทุจริต'])
         # print(dictionary2)
-        topic_term_dist = TextDistribution.topicTerm_dist(dict_2,corpus2,topic_term_dist, term_dist_topic)
+        topic_term_dist = TextDistribution.topicTerm_dist(ldamodel, corpus2)
         # print(topic_term_dist)
-        # handle1=open('topic_term_dist','a+')
+        # handle1=open('topic_term_dist_6','a+')
         # handle1.write(str(topic_term_dist))
         # handle1.write("\n")
         # handle1.close()
@@ -280,11 +280,10 @@ class LDAModeling:
         send_progress(id=id, code="160", keep=True)
 
         # Evaluate
-        lda_coherence = CoherenceModel(ldamodel, corpus=corpus2, dictionary=dictionary2, coherence='u_mass')
+        # lda_coherence = CoherenceModel(ldamodel, corpus=corpus2, dictionary=dictionary2, coherence='u_mass')
         # print(lda_coherence.get_coherence_per_topic())
         # print("LDA umass score = %.4f" % (lda_coherence.get_coherence()))
-
-        lda_coherence = CoherenceModel(ldamodel, texts=new_lists, dictionary=dictionary2, coherence='c_uci')
+        # lda_coherence = CoherenceModel(ldamodel, texts=new_lists, dictionary=dictionary2, coherence='c_uci')
         # print("LDA uci score = %.4f" % (lda_coherence.get_coherence()))
 
         print("========== PART 6 : Export pyLDAvis HTML ==========")
@@ -303,7 +302,6 @@ class LDAModeling:
         # print(terms_pairs)
 
         send_progress(id=id, code="180", keep=True)
-
         topic_chart_url = filename_from_request(project_id)
 
         result = {
@@ -327,12 +325,3 @@ class LDAModeling:
         send_progress(id=id, code="192", data=str(result))
 
         send_progress(id=id, code="050", keep=True)
-        # return result
-
-        print("=================================================")
-        print("=================================================")
-        for key in result.keys():
-            print(result[key])
-            print()
-        print("=================================================")
-        print("=================================================")

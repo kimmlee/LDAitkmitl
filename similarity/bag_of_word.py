@@ -9,59 +9,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 import natsort 
 import re
+import json
+import os
+# This package is for downloading pdf
+import urllib.request
+import ntpath
+from pdfminer.pdfparser import PDFSyntaxError
+from Util import Util
 
 import docx2txt
-from TextPreProcessing import split_word, cut_character, postag, add_frequency
-
-# Create a new Utility class to for file management and loading
-class Util:
-    def read_file(self, files):
-        data_file =[]
-        data={}
-        for f in files:
-            try:
-                f_list = re.split("; |/|\\.", f)
-                if f.endswith('.pdf'):
-                    """
-                        need modify here when the original file cannot be read.
-                    """
-                    data_file_text = extract_pdf(f)
-                elif f.endswith('.docx'):
-                    data_file_text = docx2txt.process(f)
-
-                data_file.append(data_file_text)
-            except:
-                print("=======ERROR cannot fild the below file in a given path=======")
-                print(f, f_list)
-                print('+++++++++++++++++++')
-
-            # Add Topic in dict
-            # try:
-            #     print(f)
-            #     for key in self.data.keys():
-            #         print("------->",key)
-            # except:
-            #     pass
-            data[f_list[-2]] = [str(data_file_text)]
-        return data
-
-    def find_read_file(self, doc_path_dict):
-        """
-        Finding file in input path file and keep in dictionary
-        """
-        files = []
-        for proj_id in doc_path_dict.keys():
-            files.append(doc_path_dict[proj_id])
-        files = natsort.natsorted(files,reverse=True)
-        print(files)
-        #Find file in folder path and extract file to text
-        data = self.read_file(files)
-        return data
-
+from TextPreProcessing import TextPreProcessing
 
 class BagOfWordSimilarity:
     # Set data into dataframe type
-    def to_dataframe(self, data, doc_path_dict):
+    @staticmethod
+    def to_dataframe(data, doc_path_dict):
         """
         Changing document in dictionary to dataframe and setting field like...
         | proj_id | file_path | content |
@@ -73,43 +35,39 @@ class BagOfWordSimilarity:
         data_doc = []
         # data_title = title
         data_content = []
-        print(doc_path_dict)
+        # print(doc_path_dict)
         for proj_id in data.keys():
-            print(proj_id)
             data_content.append(data[proj_id][0])
-            data_doc.append(proj_id)
-            # print(proj_id)
-            # print(doc_path_dict[proj_id])
-            file_path = doc_path_dict[proj_id]
+            for key,value in doc_path_dict.items():
+                if proj_id in value:
+                    name = key
+            data_doc.append(name)
+            file_path = doc_path_dict[name]
         data_df_dict = {'proj_id': data_doc, 'file_path':file_path,'content': data_content}
-        self.data_df = pd.DataFrame.from_dict(data_df_dict)
-        return self.data_df
+        data_df = pd.DataFrame.from_dict(data_df_dict)
+        return data_df
 
-    def similarity(self):
-        util = Util()
+    @staticmethod
+    def similarity(input_local_root,converted_local_root,streategy_local_root,doc_path_dict_,project_id,project_name, undownload_docs):
         topic_sim = []
+        unreadable_docs = []
         for num in range(17):
+            doc_path_dict = {}
+            doc_path_dict = doc_path_dict_.copy()
             print("========== PART 1 : Input Files ==========")
-            #set path here
-            doc_path_dict = {"RDG5430015":"document/docx/RDG5430015.docx", 
-            "RDG5430002":"document/docx/RDG5430002.docx",
-            "RDG5250070":"document/docx/RDG5250070.docx",
-            "MRG5980259":"document/docx/MRG5980259.docx",
-            "MRG5980243":"document/docx/MRG5980243.docx"}
-            # print("---------------->",num)
             if num == 0:
-                doc_path_dict["ยุทธศาสตร์_อววน_v12_ไม่มีผนวก"] = "document/strategy/ยุทธศาสตร์_อววน_v12_ไม่มีผนวก.docx"
+                doc_path_dict["ยุทธศาสตร์_อววน_v12_ไม่มีผนวก"] = streategy_local_root+"ยุทธศาสตร์_อววน_v12_ไม่มีผนวก.docx"
                 strategy_doc_name = "ยุทธศาสตร์_อววน_v12_ไม่มีผนวก"
             else:
-                doc_path_dict["ยุทธศาสตร์_อววน_only_prog"+str(num)] = "document/strategy/ยุทธศาสตร์_อววน_sep_programs/ยุทธศาสตร์_อววน_only_prog"+str(num)+".docx"
+                doc_path_dict["ยุทธศาสตร์_อววน_only_prog"+str(num)] = streategy_local_root+"ยุทธศาสตร์_อววน_sep_programs/ยุทธศาสตร์_อววน_only_prog"+str(num)+".docx"
                 strategy_doc_name = "ยุทธศาสตร์_อววน_only_prog"+str(num)
-            
-            data = util.find_read_file(doc_path_dict)
+            # print(doc_path_dict)
+            data, unreadable_docs = Util.find_read_file(doc_path_dict, converted_local_root, unreadable_docs)
             # for key in data.keys():
             #     print(key)
             num_doc = len(data)
             print("========== PART 2 : Data Preparation ==========")
-            data_df = self.to_dataframe(data, doc_path_dict)
+            data_df = BagOfWordSimilarity.to_dataframe(data, doc_path_dict)
             # data_df.head()
             print(data_df)
 
@@ -118,7 +76,7 @@ class BagOfWordSimilarity:
             inp_list = []
             for num in range(num_doc):
                 content = data_df['content'][num]
-                inp_list.append(split_word(content))
+                inp_list.append(TextPreProcessing.split_word(content))
 
             print("========== PART 4 : Term Weighting with TfidfVectorizer ==========")
             # Term Weighting with TfidfVectorizer
@@ -147,31 +105,37 @@ class BagOfWordSimilarity:
             doc_ranking = {key: rank for rank, key in enumerate(sorted(doc_score, key=doc_score.get, reverse=True), 1)}
             # print(doc_ranking)
 
+            # doc_ranking will sort score value from high to low
             topic_rank = []
             for proj_id in doc_ranking.keys():
-                sim_dict = {"ranking":doc_ranking[proj_id],
-                            "proj_proposal_id":proj_id,
-                            "file_path": doc_path_dict[proj_id],
-                            "score":doc_score[proj_id]}
+                sim_dict = {
+                    # "ranking":doc_ranking[proj_id],
+                    "proj_proposal_id":proj_id,
+                    "file_path": doc_path_dict[proj_id],
+                    "score":doc_score[proj_id]
+                }
                 topic_rank.append(sim_dict)
             # print("Bag of word Similarity:",topic_rank)
             topic_sim_dict = {
-                "Strategy Topic": strategy_doc_name,
-                "Similarity Ranking Score":topic_rank
+                "strategy_topic": strategy_doc_name,
+                "similarity_ranking_score":topic_rank
             }
             topic_sim.append(topic_sim_dict)
             print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
         # print(topic_sim)
         bag_of_word_sim = {
-            "Similarity Type":"Bag of word similarity",
-            "Topic Similarity": topic_sim
+            "project_id":project_id,
+            "project_name":project_name,
+            "similarity_type":"Bag of word similarity",
+            "topic_similarity": topic_sim,
+            "undownload_docs":undownload_docs,
+            "unreadable_docs":unreadable_docs
         }
         # print(bag_of_word_sim)
         return bag_of_word_sim
 
-bag_of_word_sim = BagOfWordSimilarity().similarity()
-print(bag_of_word_sim)
+
 
 
 

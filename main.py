@@ -34,6 +34,7 @@ else:
 
 input_local_root = './documents/' + request['id'] + '/'
 # input_local_root = '/Users/dhanamon/LDAitkmitl/TestDownloadFiles/'
+# input_local_root = '/Users/dhanamon/Google Drive/TRF_Y61_Mon/05012020_Topic modeling/document/TestDownloadFiles/ori/'
 
 converted_local_root = './converted/' + request['id'] + '/'
 
@@ -117,7 +118,7 @@ ldamodeling.perform_topic_modeling(id, project_id, project_name, input_local_roo
                                     max_no_topic)
 
 # max_no_topic = 10
-#
+
 # print('========== Beginning file download with urllib2. ==========')
 # to_process_files = []
 # counter = 0
@@ -127,7 +128,7 @@ ldamodeling.perform_topic_modeling(id, project_id, project_name, input_local_roo
 #     # print(file_)
 #     abs_file_path =  input_local_root + file
 #     # print(abs_file_path)
-#
+
 #     if not os.path.isfile(abs_file_path):
 #         try:
 #             print('downloading file from this url: \"{0}\" with this file name : \"{1}\".'.format(url, file))
@@ -141,10 +142,20 @@ ldamodeling.perform_topic_modeling(id, project_id, project_name, input_local_roo
 #         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
 #     to_process_files.append(file)
 #     counter += 1
-#
+
+# project_name = "โครงการวิเคราะห์ xxx"
+
 # ldamodeling = LDAModeling()
-# ldamodeling.perform_topic_modeling(input_local_root, to_process_files, titles, converted_local_root,
+# # ldamodeling.perform_topic_modeling(input_local_root, to_process_files, titles, converted_local_root,
+# #                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
+# #                                    max_no_topic)
+
+# result = ldamodeling.perform_topic_modeling(project_name, input_local_root, to_process_files, titles, converted_local_root,
 #                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
 #                                    max_no_topic)
 
+# # result['project_id'] = project_id
+# # result['undownloadable_documents'] = undownload_docs
 
+# with open('result.json', 'w', encoding='utf-8') as outfile:
+#     json.dump(str(result), outfile, ensure_ascii=False, indent=4)
