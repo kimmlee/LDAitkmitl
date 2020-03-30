@@ -75,6 +75,7 @@ if criteria == 0:
     # filename = "bag_of_word_sim.json"
 elif criteria == 1:
     sim = WordEmbeddedSimilarity.similarity(
+        request['id'],
         input_local_root,
         converted_local_root,
         strategy_local_root,

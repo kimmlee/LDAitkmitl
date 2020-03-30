@@ -52,8 +52,9 @@ class BagOfWordSimilarity:
         return data_df
 
     @staticmethod
-    def similarity(id, input_local_root, converted_local_root, streategy_local_root, doc_path_dict_, project_id,
+    def similarity(id, input_local_root, converted_local_root, strategy_local_root, doc_path_dict_, project_id,
                    project_name, undownload_docs):
+        print("[Bag of Words]")
         topic_sim = []
         unreadable_docs = []
         for num in range(17):
@@ -65,11 +66,11 @@ class BagOfWordSimilarity:
             send_progress(id=id, code="110", keep=True)
             if num == 0:
                 doc_path_dict["ยุทธศาสตร์_อววน_v12_ไม่มีผนวก"] = \
-                    streategy_local_root + "ยุทธศาสตร์_อววน_v12_ไม่มีผนวก.docx"
+                    strategy_local_root + "ยุทธศาสตร์_อววน_v12_ไม่มีผนวก.docx"
                 strategy_doc_name = "ยุทธศาสตร์_อววน_v12_ไม่มีผนวก"
             else:
                 doc_path_dict["ยุทธศาสตร์_อววน_only_prog" + str(num)] = \
-                    streategy_local_root + "ยุทธศาสตร์_อววน_sep_programs/ยุทธศาสตร์_อววน_only_prog" + str(num) + ".docx"
+                    strategy_local_root + "ยุทธศาสตร์_อววน_sep_programs/ยุทธศาสตร์_อววน_only_prog" + str(num) + ".docx"
                 strategy_doc_name = "ยุทธศาสตร์_อววน_only_prog" + str(num)
             # print(doc_path_dict)
             data, unreadable_docs = Util.find_read_file(id, doc_path_dict, converted_local_root, unreadable_docs)

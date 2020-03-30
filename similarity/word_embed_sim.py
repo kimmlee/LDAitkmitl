@@ -3,6 +3,7 @@ import sys
 sys.path.append("..")
 sys.path.append("../..")  # Adds higher directory to python modules path.
 
+from service_helper import send_progress
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from PDFreader.pdfReader import extract_pdf
@@ -66,12 +67,15 @@ class WordEmbeddedSimilarity:
         return vec
 
     @staticmethod
-    def similarity(input_local_root, converted_local_root, streategy_local_root, doc_path_dict_, project_id,
+    def similarity(id, input_local_root, converted_local_root, strategy_local_root, doc_path_dict_, project_id,
                    project_name, undownload_docs):
         # util = Util()
+        print("[Word Embed Similarity]")
         topic_sim = []
         unreadable_docs = []
         for num in range(17):
+            part = num + 1
+            send_progress(id=id, code="S00", payload=[part], keep=True)
             print("========== PART 1 : Input Files ==========")
             doc_path_dict = {}
             doc_path_dict = doc_path_dict_.copy()
@@ -83,15 +87,15 @@ class WordEmbeddedSimilarity:
             # "MRG5980243":"document/docx/MRG5980243.docx"}
             if num == 0:
                 doc_path_dict[
-                    "ยุทธศาสตร์_อววน_v12_ไม่มีผนวก"] = streategy_local_root + "ยุทธศาสตร์_อววน_v12_ไม่มีผนวก.docx"
+                    "ยุทธศาสตร์_อววน_v12_ไม่มีผนวก"] = strategy_local_root + "ยุทธศาสตร์_อววน_v12_ไม่มีผนวก.docx"
                 strategy_doc_name = "ยุทธศาสตร์_อววน_v12_ไม่มีผนวก"
             else:
                 doc_path_dict["ยุทธศาสตร์_อววน_only_prog" + str(
-                    num)] = streategy_local_root + "ยุทธศาสตร์_อววน_sep_programs/ยุทธศาสตร์_อววน_only_prog" + str(
+                    num)] = strategy_local_root + "ยุทธศาสตร์_อววน_sep_programs/ยุทธศาสตร์_อววน_only_prog" + str(
                     num) + ".docx"
                 strategy_doc_name = "ยุทธศาสตร์_อววน_only_prog" + str(num)
 
-            data, unreadable_docs = Util.find_read_file(doc_path_dict, converted_local_root, unreadable_docs)
+            data, unreadable_docs = Util.find_read_file(id, doc_path_dict, converted_local_root, unreadable_docs)
             num_doc = len(data)
             num_title = len(doc_path_dict)
             # print(num_doc)
@@ -101,6 +105,8 @@ class WordEmbeddedSimilarity:
                 return
             if num_doc != num_title:
                 return
+
+            send_progress(id=id, code="S20", payload=[part])
             # Set data into dataframe type
             data_df = WordEmbeddedSimilarity.to_dataframe(data, doc_path_dict)
             # data_df.head()
@@ -108,6 +114,7 @@ class WordEmbeddedSimilarity:
 
             print("========== PART 3 : Creating Word Tokenize ==========")
             # Word Tokenization
+            send_progress(id=id, code="S30", payload=[part])
             inp_list = []
             for num in range(num_doc):
                 content = data_df['content'][num]
@@ -115,6 +122,7 @@ class WordEmbeddedSimilarity:
                 inp_list.append(words)
 
             print("========== PART 4 : Measure the Cosine Similarity ==========")
+            send_progress(id=id, code="S40", payload=[part])
             doc_score = {}
             for i in range(1, len(inp_list)):
                 cos = cosine_similarity(WordEmbeddedSimilarity.sentence_vec(inp_list[0]),
@@ -123,7 +131,7 @@ class WordEmbeddedSimilarity:
             doc_ranking = {key: rank for rank, key in enumerate(sorted(doc_score, key=doc_score.get, reverse=True), 1)}
             # print(doc_score)
             # print(doc_ranking)
-
+            send_progress(id=id, code="S50", payload=[part])
             topic_rank = []
             for proj_id in doc_ranking.keys():
                 sim_dict = {
@@ -143,14 +151,10 @@ class WordEmbeddedSimilarity:
 
         # print(topic_sim)
         word_em_sim = {
-            "project_id": project_id,
-            "project_name": project_name,
-            "success": True,
-            "errorMessage": None,
             "similarity_type": 1,
             "topic_similarity": topic_sim,
-            "undownload_docs": undownload_docs,
-            "unreadable_docs": unreadable_docs
+            "unreadable_documents": undownload_docs,
+            "undownloadable_documents": unreadable_docs
         }
 
         # print(word_em_sim)
