@@ -115,6 +115,12 @@ def get_status_message(status_code):
         "191": "pushing files",
         "192": "pushing result",
 
+        "S00": "comparing part {} out of 17 parts",
+        "S20": "preparing data on part {}",
+        "S30": "word tokenizing on part {}",
+        "S40": "term weighting on part {}",
+        "S50": "measuring the cosine similarity on part {}",
+
         '410': "{} is not downloadable",
 
         '510': "input dataset failed on document {}",

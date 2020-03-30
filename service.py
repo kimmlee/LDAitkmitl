@@ -43,7 +43,10 @@ def run_model(connection, channel, delivery_tag, body):
     # make payload.id a string
     payload['id'] = str(payload['id'])
     payload['project_id'] = str(payload['project_id'])
-    payload['max_no_topic'] = str(payload['max_no_topic'])
+    if 'max_no_topic' in payload:
+        payload['max_no_topic'] = str(payload['max_no_topic'])
+    if 'criteria' in payload:
+        payload['criteria'] = str(payload['criteria'])
 
     '''
     ==================================================================
@@ -73,14 +76,26 @@ def run_model(connection, channel, delivery_tag, body):
         keep=True)
 
     print(" [D] Start Processing Queue-ID {} On Separate Thread".format(payload['id']))
-    process = subprocess.Popen([
-        'python',
-        'main.py',
-        payload['id'],
-        payload['project_id'],
-        payload['project_name'],
-        payload['documents'],
-        payload['max_no_topic']], stdout=subprocess.PIPE, cwd="/app")
+    if 'criteria' not in payload:
+        print(" [=] LDA")
+        process = subprocess.Popen([
+            'python',
+            'main.py',
+            payload['id'],
+            payload['project_id'],
+            payload['project_name'],
+            payload['documents'],
+            payload['max_no_topic']], stdout=subprocess.PIPE, cwd="/app")
+    else:
+        print(" [=] Similarity")
+        process = subprocess.Popen([
+            'python',
+            'main.py',
+            payload['id'],
+            payload['project_id'],
+            payload['project_name'],
+            payload['documents'],
+            payload['criteria']], stdout=subprocess.PIPE, cwd="/app/similarity")
     for line in process.stdout:
         print(line.decode('utf-8').replace('\n', ''))
 

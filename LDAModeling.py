@@ -1,5 +1,6 @@
 import sys
-sys.path.append("..") # Adds higher directory to python modules path.
+
+sys.path.append("..")  # Adds higher directory to python modules path.
 
 from Util import Util
 from TextPreProcessing import TextPreProcessing
@@ -113,6 +114,8 @@ from service_helper import filename_from_request
     >>> cross_val_score(clf, iris.data, iris.target, cv=10)
 
     """
+
+
 # todo edit "Create a new classifier which is based on the sckit-learn BaseEstimator and ClassifierMixin classes"
 class LDAModeling:
 
@@ -153,24 +156,26 @@ class LDAModeling:
 
         souptemp = soup.prettify()
         souptemp = souptemp.replace('https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js', 'static/js/d3.min.js')
-        souptemp = souptemp.replace('https://cdn.rawgit.com/bmabey/pyLDAvis/files/ldavis.v1.0.0.js', 'static/js/ldavis.v1.0.0.js')
+        souptemp = souptemp.replace('https://cdn.rawgit.com/bmabey/pyLDAvis/files/ldavis.v1.0.0.js',
+                                    'static/js/ldavis.v1.0.0.js')
         souptemp = souptemp.replace('https://cdn.rawgit.com/bmabey/pyLDAvis/files/ldavis.v1.0.0.css',
                                     'static/css/ldavis.v1.0.0.css')
 
         with open(th_output_dir + th_pyLDAvis_file, "w") as outf:
             outf.write(souptemp)
 
-
     """to remove"""
+
     # Generate LDA Model
     def LDAmodel(self, dictionary, corpus, num_top=10):
         ldamodel = LdaModel(corpus, num_top, id2word=dictionary, decay=0.6, random_state=2, passes=10)
         return ldamodel
 
-    def perform_topic_modeling(self, id, project_id, project_name, input_local_root, files, titles, converted_local_root,
-                               output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file, undownloadable_documents,
-                               max_no_topic = 10, is_short_words_removed = True):
-        
+    def perform_topic_modeling(self, id, project_id, project_name, input_local_root, files, titles,
+                               converted_local_root,
+                               output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
+                               undownloadable_documents,
+                               max_no_topic=10, is_short_words_removed=True):
 
         print("========== PART 1 : Input Files ==========")
         send_progress(id=id, code="110", keep=True)
@@ -178,7 +183,6 @@ class LDAModeling:
         num_doc = len(titles)
 
         print("========== PART 2 : Data Preparation and Creating Word Tokenization ==========")
-<<<<<<< HEAD
 
         if len(data) == 0 and len(titles) == 0:
             print("[E] Data is not well prepared. Canceling this job...")
@@ -191,34 +195,6 @@ class LDAModeling:
             return
 
         send_progress(id=id, code="120", keep=True)
-=======
-        if len(data) == 0 and len(titles) == 0:
-            result = {
-                "project_id":None,
-                "success":False,
-                "errorMessage":None,
-                "topic_chart_url": output_dir + pyLDAvis_output_file,
-                "term_topic_matrix":None,
-                "document_topic_matrix":None,
-                "topic_stat":None,
-                "term_pairs":None,
-                "unreadable_documents":unreadable_docs
-            }
-            return result
-        if len(data) != len(titles):
-            result = {
-                "project_id":None,
-                "success":False,
-                "errorMessage":None,
-                "topic_chart_url": output_dir + pyLDAvis_output_file,
-                "term_topic_matrix":None,
-                "document_topic_matrix":None,
-                "topic_stat":None,
-                "term_pairs":None,
-                "unreadable_documents":unreadable_docs
-            }
-            return result
->>>>>>> upstream/master
 
         # Set data into dataframe type
         data_df = self.to_dataframe(data, titles)
@@ -237,7 +213,7 @@ class LDAModeling:
         # Create dictionary, corpus and corpus TFIDF
         # Turn tokenized documents into a id <-> term dictionary
         dictionary = corpora.Dictionary(inp_list)
-        dict2 = {dictionary[ID]:ID for ID in dictionary.keys()}
+        dict2 = {dictionary[ID]: ID for ID in dictionary.keys()}
 
         # Convert tokenized documents into a document-term matrix
         corpus = [dictionary.doc2bow(text) for text in inp_list]
@@ -252,12 +228,12 @@ class LDAModeling:
 
         # Remove word is not noun and prop noun by pos_tag function
         for num in range(num_doc):
-            send_progress(id=id, code="121", payload=[num+1])
+            send_progress(id=id, code="121", payload=[num + 1])
             new_lists[num] = TextPreProcessing.postag(new_lists[num])
 
         # Create new dict and corpus
         dictionary2 = corpora.Dictionary(new_lists)
-        dict_2 = {dictionary2[ID]:ID for ID in dictionary2.keys()}
+        dict_2 = {dictionary2[ID]: ID for ID in dictionary2.keys()}
         corpus2 = [dictionary2.doc2bow(text) for text in new_lists]
 
         # Header Title plus frequency in corpus
@@ -296,13 +272,14 @@ class LDAModeling:
         print("========== PART 4-1 : Document-topic (all) distribution ==========")
         ### Doc_topic_all_dist
         doc_topic_dist = []
-        doc_topic_dist = TextDistribution.docTopic_dist(doc_topic_dist, data_df, num_doc, inp_list,dictionary2,ldamodel)
+        doc_topic_dist = TextDistribution.docTopic_dist(doc_topic_dist, data_df, num_doc, inp_list, dictionary2,
+                                                        ldamodel)
         # print(doc_topic_dist)
 
         print("========== PART 4-2 : Document-topic (min) distribution ==========")
         ### Doc_topic_min_dist
         n_doc_intopic = []
-        n_doc_intopic = TextDistribution.Ndoc_topic(n_doc_intopic,num_doc, data_df, inp_list, dictionary2, ldamodel)
+        n_doc_intopic = TextDistribution.Ndoc_topic(n_doc_intopic, num_doc, data_df, inp_list, dictionary2, ldamodel)
         # print(n_doc_intopic)
 
         print("========== PART 5 : Evaluate Model ==========")
@@ -325,7 +302,8 @@ class LDAModeling:
         pyLDAvis.save_html(vis, output_dir + pyLDAvis_output_file)
 
         print("========== PART 7 : Convert pyLDAvis HTML to Thai==========")
-        self.localize_pyLDAvis_to_thai(project_name, output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file)
+        self.localize_pyLDAvis_to_thai(project_name, output_dir, pyLDAvis_output_file, th_output_dir,
+                                       th_pyLDAvis_output_file)
 
         print("========== PART 8 : Word/Term Pair Similairty==========")
         terms_pairs = TextDistribution.compute_term_pairs(topic_term_dist, self.no_top_terms)
@@ -336,8 +314,6 @@ class LDAModeling:
 
         result = {
             "project_id": project_id,
-            "success":True,
-            "errorMessage":None,
             "topic_chart_url": topic_chart_url,
             "term_topic_matrix": topic_term_dist,
             "document_topic_matrix": doc_topic_dist,
@@ -348,8 +324,10 @@ class LDAModeling:
         }
 
         output_files = [
-            ('resultFile', (topic_chart_url['en'], open('./results/' + pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'})),
-            ('resultFile', (topic_chart_url['th'], open('./results/' + th_pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'}))
+            ('resultFile',
+             (topic_chart_url['en'], open('./results/' + pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'})),
+            ('resultFile',
+             (topic_chart_url['th'], open('./results/' + th_pyLDAvis_output_file, 'rb'), 'text/html', {'Expires': '0'}))
         ]
 
         # send_progress(id=id, code="190", data=result, keep=True, files=output_files)
