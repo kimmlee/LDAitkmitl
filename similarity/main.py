@@ -40,6 +40,11 @@ print('========== Beginning file download with urllib2. ==========')
 # to_process_files = []
 doc_path_dict_ = {}
 undownload_docs = []
+send_progress(
+    id=request['id'],
+    code="011",
+    payload=["s" if len(request['documents']) > 1 else ""],
+    keep=True)
 for doc_id, document in request['documents'].items():
     # print('document id: {0}'.format(doc_id))
     # print(document)
@@ -54,10 +59,19 @@ for doc_id, document in request['documents'].items():
             print('downloading file from this url: \"{0}\" with this file name : \"{1}\".'.format(url, file))
             urllib.request.urlretrieve(url, abs_file_path)
             doc_path_dict_[doc_id] = abs_file_path
+            send_progress(
+                id=request['id'],
+                code="021",
+                payload=[file])
         except:
             print('An exception occurred when downloading a file from this url, \"{0}\"'.format(url))
             # Record this document that cannot be downloaded in an error list.
             undownload_docs.append(doc_id)
+            send_progress(
+                id=request['id'],
+                code="410",
+                payload=[url],
+                keep=True)
     else:
         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
         doc_path_dict_[doc_id] = abs_file_path
