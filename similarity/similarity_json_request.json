@@ -3,10 +3,10 @@
         "project_id": 1,
         "project_name": "โครงการวิเคราห์ xxx",
         "documents": {
-            1: {
+            "1": {
                 "url": "https://elibrary.trf.or.th/fullP/RDG6240001/RDG6240001_full.pdf"
             },
-            2: {
+            "2": {
                 "url": "https://elibrary.trf.or.th/fullP/RDG6210003/RDG6210003_full.pdf"
             }
         },

@@ -120,7 +120,7 @@ class LDAModeling:
         self.num_cut = 2
         self.no_top_terms = 20
 
-    def to_dataframe(self, data, titles):
+    def to_dataframe(self, data, titles, doc_path_file):
         """
         Changing document in dictionary to dataframe and setting field like...
         | doc_id | title | content |
@@ -132,9 +132,12 @@ class LDAModeling:
         data_doc = []
         data_titles = titles
         data_content = []
-        for doc_id in data.keys():
-            data_content.append(data[doc_id][0])
-            data_doc.append(doc_id)
+        for doc_name in data.keys():
+            data_content.append(data[doc_name][0])
+            for key,value in doc_path_file.items():
+                if doc_name in value:
+                    id_ = key
+            data_doc.append(id_)
         data_df_dict = {'doc_id': data_doc, 'title': data_titles, 'content': data_content}
         data_df = pd.DataFrame.from_dict(data_df_dict)
         return data_df
@@ -167,7 +170,7 @@ class LDAModeling:
         ldamodel = LdaModel(corpus, num_top, id2word=dictionary, decay=0.6, random_state=2, passes=10)
         return ldamodel
 
-    def perform_topic_modeling(self, project_name, input_local_root, files, titles, converted_local_root,
+    def perform_topic_modeling(self, project_name, input_local_root, files, titles, doc_path_file,converted_local_root,
                                output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
                                max_no_topic = 10, is_short_words_removed = True):
         
@@ -205,7 +208,7 @@ class LDAModeling:
             return result
 
         # Set data into dataframe type
-        data_df = self.to_dataframe(data, titles)
+        data_df = self.to_dataframe(data, titles, doc_path_file)
         data_df.head()
 
         inp_list = []
