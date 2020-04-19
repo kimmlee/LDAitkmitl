@@ -121,7 +121,7 @@ class TextDistribution:
         relevance_ = relevance.T.apply(lambda s: s.sort_values(ascending=False).values).head(R)
 
         topic_term_dist = []
-        x=0
+        x=1
         for num_topic in topic_list:
             term_list = []
             for num_term in range(len(id_)):
@@ -148,7 +148,7 @@ class TextDistribution:
                     term_list.append(term)
                 # ----- end water mask -----
             # add topic-term to list
-            topic_term = {"topic_id":x,
+            topic_term = {"topic_no":x,
                         "terms":term_list}
             topic_term_dist.append(topic_term)
             x+=1
@@ -164,7 +164,7 @@ class TextDistribution:
 
         doc_topic_list = []
         for i in doc_dist:
-            doc_topic_dict = {'topic_id':i[0],'score':i[1]}
+            doc_topic_dict = {'topic_no':i[0]+1,'score':i[1]}
             doc_topic_list.append(doc_topic_dict)
         doc_dict = {'doc_id':doc_id,'topics':doc_topic_list}
         doc_topic_dist.append(doc_dict)
@@ -219,7 +219,7 @@ class TextDistribution:
 
         print(doc_dist_dict)
         for i in doc_dist_dict:
-            ndoc_dict = {'topic_id':i, 'n_doc':doc_dist_dict[i]}
+            ndoc_dict = {'topic_no':i+1, 'n_doc':doc_dist_dict[i]}
             n_doc_intopic.append(ndoc_dict)
 
         return n_doc_intopic
@@ -231,7 +231,7 @@ class TextDistribution:
 
             "term_topic_matrix":[
                 {
-                    "topic_id":0,
+                    "topic_no":1, //from 1-10
                     "terms":[
                         {
                            "term":"prawns",
@@ -248,7 +248,7 @@ class TextDistribution:
                     ]
                 },
                 {
-                    "topic_id":0,
+                    "topic_no":2,
                     "terms":[
                         {
                            "term":"prawns",
@@ -288,28 +288,28 @@ class TextDistribution:
         # print(topic_term_dist)
         # print("No of Topics: {0}".format(len(topic_term_dist)))
         for each_term_topic_1 in topic_term_dist:
-            topic_id_1 = each_term_topic_1['topic_id']
-            # print("topic id 1: {0}".format(topic_id_1))
+            topic_no_1 = each_term_topic_1['topic_no']
+            # print("topic id 1: {0}".format(topic_no_1))
 
             for each_term_topic_2 in topic_term_dist:
-                topic_id_2 = each_term_topic_2['topic_id']
+                topic_no_2 = each_term_topic_2['topic_no']
 
-                # compare terms from two different topics as half (triangle) matrix regardless of the same number of topic_id
-                if (int(topic_id_1) < int(topic_id_2)):
-                    # print("topic id 2: {0}".format(topic_id_2))
+                # compare terms from two different topics as half (triangle) matrix regardless of the same number of topic_no
+                if (int(topic_no_1) < int(topic_no_2)):
+                    # print("topic id 2: {0}".format(topic_no_2))
 
                     terms_1 = each_term_topic_1['terms']
                     for i in range(min(len(terms_1), no_top_terms)):
                         term_pair = {}
                         term_1 = terms_1[i]
                         score_1 = term_1['score']
-                        # print('topic id {0}, term {1}: "{2}": score={3}'.format(topic_id_1, i, term_1['term'], score_1))
+                        # print('topic id {0}, term {1}: "{2}": score={3}'.format(topic_no_1, i, term_1['term'], score_1))
 
                         terms_2 = each_term_topic_2['terms']
                         for j in range(min(len(terms_2), no_top_terms)):
                             term_2 = terms_2[j]
                             score_2 = term_2['score']
-                            # print('topic id {0}, term {1}: "{2}": score={3}'.format(topic_id_2, j, term_2['term'], score_2))
+                            # print('topic id {0}, term {1}: "{2}": score={3}'.format(topic_no_2, j, term_2['term'], score_2))
 
                             if(term_1['term'] !=  term_2['term']):
                                 cooccurence_score = score_1 * score_2

@@ -66,6 +66,7 @@ print('========== Beginning file download with urllib2. ==========')
 
 to_process_files = []
 to_process_titles = []
+doc_path_file = {}
 undownload_docs = []
 
 send_progress(
@@ -90,6 +91,7 @@ for doc_id, document in request['documents'].items():
             urllib.request.urlretrieve(url, abs_file_path)
 
             to_process_files.append(file)
+            doc_path_file[doc_id] = abs_file_path
             to_process_titles.append(document['title'])
             send_progress(
                 id=id,
@@ -107,15 +109,28 @@ for doc_id, document in request['documents'].items():
     else:
         print('-- This file, \"{0}\", already exists in: \"{1}\"! Therefore, this file will not be downloaded. --'.format(file, input_local_root))
         to_process_files.append(file)
+        doc_path_file[doc_id] = abs_file_path
         to_process_titles.append(document['title'])
 
 # print('========================')
 # print(documents)
 
 ldamodeling = LDAModeling()
-ldamodeling.perform_topic_modeling(id, project_id, project_name, input_local_root, to_process_files, to_process_titles, converted_local_root,
-                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file, undownload_docs,
-                                    max_no_topic)
+ldamodeling.perform_topic_modeling(
+    id, 
+    project_id, 
+    project_name, 
+    input_local_root, 
+    to_process_files, 
+    to_process_titles, 
+    doc_path_file,
+    converted_local_root,
+    output_dir, 
+    pyLDAvis_output_file, 
+    th_output_dir, 
+    th_pyLDAvis_output_file, 
+    undownload_docs,
+    max_no_topic)
 
 # max_no_topic = 10
 
