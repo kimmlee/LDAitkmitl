@@ -12,7 +12,8 @@ except:
 class LexTo (object):
 	def __init__(self):
 		filePath = os.path.join(os.path.dirname(pylexto.__file__), 'LongLexTo') 
-		jpype.startJVM(jpype.getDefaultJVMPath(), '-ea', '-Djava.class.path=%s' % (filePath))
+		if not jpype.isJVMStarted():
+			jpype.startJVM(jpype.getDefaultJVMPath(), '-ea', '-Djava.class.path=%s' % (filePath))
 		
 		LongLexTo = jpype.JClass("LongLexTo")
 		self.lexto = LongLexTo('%s/lexitron.txt' % (filePath))

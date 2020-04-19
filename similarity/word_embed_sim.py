@@ -78,11 +78,11 @@ class WordEmbeddedSimilarity:
             # "MRG5980259":"document/docx/MRG5980259.docx",
             # "MRG5980243":"document/docx/MRG5980243.docx"}
             if num == 0:
-                doc_path_dict["ยุทธศาสตร์_อววน_v12_ไม่มีผนวก"] = streategy_local_root+"ยุทธศาสตร์_อววน_v12_ไม่มีผนวก.docx"
-                strategy_doc_name = "ยุทธศาสตร์_อววน_v12_ไม่มีผนวก"
+                doc_path_dict["Policy_and_strategy"] = streategy_local_root+"Policy_and_strategy.pdf"
+                strategy_doc_name = "Policy_and_strategy"
             else:
-                doc_path_dict["ยุทธศาสตร์_อววน_only_prog"+str(num)] = streategy_local_root+"ยุทธศาสตร์_อววน_sep_programs/ยุทธศาสตร์_อววน_only_prog"+str(num)+".docx"
-                strategy_doc_name = "ยุทธศาสตร์_อววน_only_prog"+str(num)
+                doc_path_dict["Policy_and_strategy_only_prog"+str(num)] = streategy_local_root+"ยุทธศาสตร์_อววน_sep_programs/Policy_and_strategy_only_prog"+str(num)+".docx"
+                strategy_doc_name = "Policy_and_strategy_only_prog"+str(num)
 
             data, unreadable_docs = Util.find_read_file(doc_path_dict, converted_local_root, unreadable_docs)
             num_doc = len(data)
@@ -96,7 +96,7 @@ class WordEmbeddedSimilarity:
                     "project_name":project_name,
                     "success":False,
                     "errorMessage":None,
-                    "similarity_type":0,
+                    "criteria":0,
                     "topic_similarity": None,
                     "undownload_docs":undownload_docs,
                     "unreadable_docs":unreadable_docs
@@ -108,7 +108,7 @@ class WordEmbeddedSimilarity:
                     "project_name":project_name,
                     "success":False,
                     "errorMessage":None,
-                    "similarity_type":0,
+                    "criteria":0,
                     "topic_similarity": None,
                     "undownload_docs":undownload_docs,
                     "unreadable_docs":unreadable_docs
@@ -140,7 +140,7 @@ class WordEmbeddedSimilarity:
             for proj_id in doc_ranking.keys():
                 sim_dict = {
                     # "ranking":doc_ranking[proj_id],
-                    "proj_proposal_id":proj_id,
+                    "document_id":proj_id,
                     "file_path": doc_path_dict[proj_id],
                     "score":doc_score[proj_id]
                 }
@@ -159,7 +159,7 @@ class WordEmbeddedSimilarity:
             "project_name":project_name,
             "success":True,
             "errorMessage":None,
-            "similarity_type":1,
+            "criteria":1,
             "topic_similarity": topic_sim,
             "undownload_docs":undownload_docs,
             "unreadable_docs":unreadable_docs
