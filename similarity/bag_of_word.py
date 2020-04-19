@@ -65,13 +65,11 @@ class BagOfWordSimilarity:
             print("========== PART 1 : Input Files ==========")
             send_progress(id=id, code="110", keep=True)
             if num == 0:
-                doc_path_dict["ยุทธศาสตร์_อววน_v12_ไม่มีผนวก"] = \
-                    strategy_local_root + "ยุทธศาสตร์_อววน_v12_ไม่มีผนวก.docx"
-                strategy_doc_name = "ยุทธศาสตร์_อววน_v12_ไม่มีผนวก"
+                doc_path_dict["Policy_and_strategy"] = streategy_local_root+"Policy_and_strategy.pdf"
+                strategy_doc_name = "Policy_and_strategy"
             else:
-                doc_path_dict["ยุทธศาสตร์_อววน_only_prog" + str(num)] = \
-                    strategy_local_root + "ยุทธศาสตร์_อววน_sep_programs/ยุทธศาสตร์_อววน_only_prog" + str(num) + ".docx"
-                strategy_doc_name = "ยุทธศาสตร์_อววน_only_prog" + str(num)
+                doc_path_dict["Policy_and_strategy_only_prog"+str(num)] = streategy_local_root+"ยุทธศาสตร์_อววน_sep_programs/Policy_and_strategy_only_prog"+str(num)+".docx"
+                strategy_doc_name = "Policy_and_strategy_only_prog"+str(num)
             # print(doc_path_dict)
             data, unreadable_docs = Util.find_read_file(id, doc_path_dict, converted_local_root, unreadable_docs)
             # for key in data.keys():
@@ -137,7 +135,7 @@ class BagOfWordSimilarity:
             for proj_id in doc_ranking.keys():
                 sim_dict = {
                     # "ranking":doc_ranking[proj_id],
-                    "proj_proposal_id": proj_id,
+                    "document_id":proj_id,
                     "file_path": doc_path_dict[proj_id],
                     "score": doc_score[proj_id]
                 }
@@ -152,7 +150,7 @@ class BagOfWordSimilarity:
 
         # print(topic_sim)
         bag_of_word_sim = {
-            "similarity_type": 0,
+            "criteria": 0,
             "topic_similarity": topic_sim,
             "unreadable_documents": undownload_docs,
             "undownloadable_documents": unreadable_docs
