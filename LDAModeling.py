@@ -308,7 +308,11 @@ class LDAModeling:
 
         print("========== PART 8 : Word/Term Pair Similairty==========")
         terms_pairs = TextDistribution.compute_term_pairs(topic_term_dist, self.no_top_terms)
+<<<<<<< Updated upstream
         # print(terms_pairs)
+=======
+        #print(terms_pairs)
+>>>>>>> Stashed changes
 
         result = {
             "project_id":None,
