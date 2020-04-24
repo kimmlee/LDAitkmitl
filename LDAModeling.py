@@ -158,11 +158,9 @@ class LDAModeling:
         soup.head.append(new_title_tag)
 
         souptemp = soup.prettify()
-        souptemp = souptemp.replace('https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js', 'static/js/d3.min.js')
-        souptemp = souptemp.replace('https://cdn.rawgit.com/bmabey/pyLDAvis/files/ldavis.v1.0.0.js',
-                                    'static/js/ldavis.v1.0.0.js')
-        souptemp = souptemp.replace('https://cdn.rawgit.com/bmabey/pyLDAvis/files/ldavis.v1.0.0.css',
-                                    'static/css/ldavis.v1.0.0.css')
+        souptemp = souptemp.replace('https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js', '/static/js/d3.min.js')
+        souptemp = souptemp.replace('https://cdn.rawgit.com/bmabey/pyLDAvis/files/ldavis.v1.0.0.js', '/static/js/ldavis.v1.0.0.js')
+        souptemp = souptemp.replace('https://cdn.rawgit.com/bmabey/pyLDAvis/files/ldavis.v1.0.0.css', '/static/css/ldavis.v1.0.0.css')
 
         with open(th_output_dir + th_pyLDAvis_file, "w") as outf:
             outf.write(souptemp)
