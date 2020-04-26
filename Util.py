@@ -25,24 +25,25 @@ class Util:
         This class has not either instance or static attributes
     """
 
-    """
-      A static method, read_file(files), reads all files listed in a given List
     
-    Parameters
-    ----------
-    files: a list of files in a string format, required
-        
-    Returns
-    ----------
-    data: a dictionary, in which a key is a file name and a value is a document text (raw text.)
-        {
-            "SRI61X0602_full": "การศึกษาวิเคราะห์การทุจริตคอร์รัปชันของขบวนการเครือข่ายนายหน้าข้ามชาติในอุตสาหกรรมประมงต่อเนื่องของประเทศไทย",
-            "RDG6140010_full": "โครงการวิจัยและพัฒนาแนวทางการหนุนเสริมทางวิชาการเพื่อพัฒนากระบวนการผลิตและพัฒนาครูโดยบูรณาการแนวคิดจิตตปัญญาศึกษา",
-            ...
-        }
-    """
     @staticmethod
     def read_file(id, local_path, files, converted_local_root):
+        """
+        A static method, read_file(files), reads all files listed in a given List
+        
+        Parameters
+        ----------
+        files: a list of files in a string format, required
+            
+        Returns
+        ----------
+        data: a dictionary, in which a key is a file name and a value is a document text (raw text.)
+            {
+                "SRI61X0602_full": "การศึกษาวิเคราะห์การทุจริตคอร์รัปชันของขบวนการเครือข่ายนายหน้าข้ามชาติในอุตสาหกรรมประมงต่อเนื่องของประเทศไทย",
+                "RDG6140010_full": "โครงการวิจัยและพัฒนาแนวทางการหนุนเสริมทางวิชาการเพื่อพัฒนากระบวนการผลิตและพัฒนาครูโดยบูรณาการแนวคิดจิตตปัญญาศึกษา",
+                ...
+            }
+        """
         # create a dictionary, in which a key is a file name and a value is a document text (raw text.)
         data = {}
         unreadable_docs = []
@@ -107,26 +108,27 @@ class Util:
     #     data = self.read_file(files, converted_local_root)
     #     return data
 
-    """
-    A static method, filter_file_to_read(local_path, files), filters 'in' files in supported formats only (pdf, docx)
     
-    Parameters
-    ----------
-    local_path: a local path that all files are storedt and located
-    
-    files: a list of files in a string format, required
-        
-    Returns
-    ----------
-    data: a dictionary, in which a key is a file name and a value is a document text (raw text.)
-        {
-            "SRI61X0602_full": "การศึกษาวิเคราะห์การทุจริตคอร์รัปชันของขบวนการเครือข่ายนายหน้าข้ามชาติในอุตสาหกรรมประมงต่อเนื่องของประเทศไทย",
-            "RDG6140010_full": "โครงการวิจัยและพัฒนาแนวทางการหนุนเสริมทางวิชาการเพื่อพัฒนากระบวนการผลิตและพัฒนาครูโดยบูรณาการแนวคิดจิตตปัญญาศึกษา",
-            ...
-        }
-    """
     @staticmethod
     def filter_file_to_read(id, local_path, files, converted_local_root):
+        """
+        A static method, filter_file_to_read(local_path, files), filters 'in' files in supported formats only (pdf, docx)
+        
+        Parameters
+        ----------
+        local_path: a local path that all files are storedt and located
+        
+        files: a list of files in a string format, required
+            
+        Returns
+        ----------
+        data: a dictionary, in which a key is a file name and a value is a document text (raw text.)
+            {
+                "SRI61X0602_full": "การศึกษาวิเคราะห์การทุจริตคอร์รัปชันของขบวนการเครือข่ายนายหน้าข้ามชาติในอุตสาหกรรมประมงต่อเนื่องของประเทศไทย",
+                "RDG6140010_full": "โครงการวิจัยและพัฒนาแนวทางการหนุนเสริมทางวิชาการเพื่อพัฒนากระบวนการผลิตและพัฒนาครูโดยบูรณาการแนวคิดจิตตปัญญาศึกษา",
+                ...
+            }
+        """
 
         # Find all files in a given input path and list absolute paths to them in the variable files
         to_read_files = []
@@ -146,19 +148,20 @@ class Util:
         print(unreadable_docs)
         return data, unreadable_docs
 
-    """
-    A static method, path_leaf(path), returns a file name (leaf) from a given url or path
-    
-    Parameters
-    ----------
-    path: a path or url directing to a file 
-        
-    Returns
-    ----------
-    tail: a file name (leaf of path) if such a file exists; otherwise, a directory of one level above is returned 
-    """
+   
     @staticmethod
     def path_leaf(path):
+        """
+        A static method, path_leaf(path), returns a file name (leaf) from a given url or path
+        
+        Parameters
+        ----------
+        path: a path or url directing to a file 
+            
+        Returns
+        ----------
+        tail: a file name (leaf of path) if such a file exists; otherwise, a directory of one level above is returned 
+        """
         head, tail = ntpath.split(path)
         fname = None
 
@@ -171,19 +174,20 @@ class Util:
 
         return fname or tail or ntpath.basename(head)
 
-    """
-      A static method, path_dir(path), returns a directory where a given file is located from a given url or path
-
-      Parameters
-      ----------
-      path: a path or url directing to a file 
-
-      Returns
-      ----------
-      tail: a file name (leaf of path)
-      """
+    
 
     @staticmethod
     def path_dir(path):
+        """
+        A static method, path_dir(path), returns a directory where a given file is located from a given url or path
+
+        Parameters
+        ----------
+        path: a path or url directing to a file 
+
+        Returns
+        ----------
+        tail: a file name (leaf of path)
+        """
         head, tail = ntpath.split(path)
         return head

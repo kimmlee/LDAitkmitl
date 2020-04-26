@@ -16,108 +16,26 @@ import bs4
 from service_helper import send_progress
 from service_helper import filename_from_request
 
-"""An ensemble classifier that uses heterogeneous models at the base layer and a aggregation model at the 
-    aggregation layer. A k-fold cross validation is used to generate training data for the stack layer model.
-
-    Parameters
-    ----------
-    n_classes: integer, required (especially when setting proba_2train_meta = True)   
-        The number of target classes for prediction, used to construct an array to store the prbability output from base classifiers
-
-    estimators: list of BaseEstimators, optional (default = 6 base estimators, including:  
-            1) DecisionTreeClassifier with max_depth = 10,
-            2) ExtraTreeClassifier,
-            3) LogisticRegression,
-            4) Support Vector Machine - NuSVC,
-            5) Support Vector Machine - SVC,
-            6) KNeighborsClassifier with n_neighbors = 5)
-        A list of scikit-learn base estimators with fit() and predict() methods.
-
-    cv_folds: integer, optional (default = 5)
-        The number of k to perform k-fold cross validation to be used. 
-
-    proba_2train_meta: boolean, optional (default = False)
-        A boolean flag variable to specify the meta learner at the stacked level should be trained either on label output or probability output.
-            False => trained on 'label output' - Typical Super learner classifier, using Stack Layer Training Set (Labels)
-            True => train on 'probability output' - using Stack Layer Training Set (Probabilities)
-
-    ori_input_2train_meta: boolean , optional (default = False)
-        A boolean flag variable to specify whether the meta learner should be trained on the training set with original features or not.
-            False => trained only on 'output' from base estimators 
-            True => train on 'original features/inputs' plus 'output' from base estimators
-
-    meta_model_type: string, optional (default = "DCT")
-        An option in string, only either "DCT" or "LR", to specify the type of model to use at the stack layer for a meta learner
-            "DCT" => DecisionTreeClassifier
-            "LR" => LogisticRegression
-
-    est_accuracy: boolean, optional (default = False) - only available when proba_2train_meta = False
-        A boolean flag variable to analyse and print the Mean Accuracy (MA) as the strength/performance of base estimators (predictive power). 
-            False => do nothing
-            True => analyse and print the mean accuracy
-
-    est_corr: boolean, optional (default = False) - only available when proba_2train_meta = False
-        A boolean flag variable to analyse and print the Pearson correlation between base estimators (diversity).
-            False => do nothing
-            True => analyse and print the Pearson correlation between base estimators
-
-    debug_mode: boolean, optional (default = False)
-        A boolean flag variable to set the verbose mode in printing debugging info via the "_print_debug" function
+class LDAModeling:
+    """
+    LDAModeling class is The process of Latent Dirichlet Allocation (LDA), a form of unsupervised learning which generate a topic modeling is 
+    the process of identifying topics in a set of documents. This can be useful for search engines, customer service 
+    automation, and any other instance where knowing the topics of documents is important.
+    This class contains 4 static methods, including: 
+        1) to_dataframe()
+        2) localize_pyLDAvis_to_thai()
+        3) LDAModel()
+        4) perform_topic_modeling()
 
     Attributes
     ----------
-    n_classes: integer   
-        The number of target classes for prediction, used to expand an array to store the prbability output from base classifiers
+    num_cut: integer
+        The number of word character is less than input number will be remove.
 
-    estimators: list
-        A list of BaseEstimators used  
-
-    cv_folds: integer
-        the number of k to perform cross validation used 
-
-    proba_2train_meta: boolean
-        the flag variable to select the Stack Layer Training Set to be Labels (False) or Probabilities (True)
-
-    ori_input_2train_meta: boolean
-        the flag variable to include the original features/inputs in the Stack Layer Training Set: not include (False) or include (True)
-
-    meta_model_type: string
-        the option variable for the type of model of the meta-learner at the stack layer 
-
-    est_accuracy: boolean
-        the flag variable to perform and print an analysis of Mean Accuracy (MA) of base estimators: not perform (False) or perform (True)
-
-    est_corr: boolean
-        the flag variable to perform and print an analysis of Pearson correlation between base estimators: not perform (False) or perform (True)
-
-    debug_mode: boolean
-        The flag variable to print debugging info via the "_print_debug" function
-
-    Notes
-    -----
-
-
-    See also
-    --------
-
-    ----------
-    .. [1]  van der Laan, M., Polley, E. & Hubbard, A. (2007). 
-            Super Learner. Statistical Applications in Genetics 
-            and Molecular Biology, 6(1) 
-            doi:10.2202/1544-6115.1309
-    Examples
-    --------
-    >>> from sklearn.datasets import load_iris
-    >>> from sklearn.model_selection import cross_val_score
-    >>> clf = SuperLearnerClassifier()
-    >>> iris = load_iris()
-    >>> cross_val_score(clf, iris.data, iris.target, cv=10)
+    no_top_terms: integer, optional (default = 30)
+        The maximum number of term of topic that will be pair
 
     """
-
-
-# todo edit "Create a new classifier which is based on the sckit-learn BaseEstimator and ClassifierMixin classes"
-class LDAModeling:
 
     def __init__(self):
         self.num_cut = 2
@@ -125,12 +43,21 @@ class LDAModeling:
 
     def to_dataframe(self, data, titles, doc_path_file):
         """
-        Changing document in dictionary to dataframe and setting field like...
+        A static method, change a document in dictionary to dataframe and setting field like...
         | doc_id | title | content |
 
-        doc_id: Document's file name.
-        title: Tile of document.
-        content: Content of document.
+        Parameters
+        ----------
+        doc_id: string, a document's file name.
+        title: string, a title of document.
+        content: string, a content of document.
+            
+        Returns
+        ----------
+        data_df: a data frame, in which keys are document id, title, and content.
+        | doc_id | title  |  content   |
+        |  001   | การศึกษาวิเคราะห์การทุจริตคอร์รัปชันของขบวนการเครือข่ายนายหน้าข้ามชาติในอุตสาหกรรมประมงต่อเนื่องของประเทศไทย | โครงการวิจัยและพัฒนาแนวทางการหนุนเสริมทางวิชาการเพื่อพัฒนากระบวนการผลิตและพัฒนาครูโดยบูรณาการแนวคิดจิตตปัญญาศึกษา |
+
         """
         data_doc = []
         data_titles = titles
@@ -146,6 +73,26 @@ class LDAModeling:
         return data_df
 
     def localize_pyLDAvis_to_thai(self, project_name, en_input_dir, en_pyLDAvis_file, th_output_dir, th_pyLDAvis_file):
+        """
+        A static method, change a original pyLDAvis html to thai version
+
+        Parameters
+        ----------
+        project_name: string
+            Input project name
+        en_input_dir: string
+            English input path directory 
+        en_pyLDAvis_file: string
+            English pyLDAvis html file name
+        th_output_dir: string
+            Thai input path directory 
+        th_pyLDAvis_file: string
+            Thai pyLDAvis html file name
+
+        Returns
+        ----------
+        pyLDAvis version Thai in th_output_dir path
+        """
         with open(en_input_dir + en_pyLDAvis_file) as inf:
             txt = inf.read()
             soup = bs4.BeautifulSoup(txt, features="lxml")
@@ -169,6 +116,22 @@ class LDAModeling:
 
     # Generate LDA Model
     def LDAmodel(self, dictionary, corpus, num_top=10):
+        """
+        To generate LDA Model with gensim module
+
+        Parameters
+        ----------
+        dictionary: dictionary
+            A dictionary of word and word id in document
+        corpus: list
+            A list of word id and its frequency in document
+        num_top: integer, optional (default = 10)
+            The number of topic to define 
+
+        Returns
+        ----------
+        LDAmodel object
+        """
         ldamodel = LdaModel(corpus, num_top, id2word=dictionary, decay=0.6, random_state=2, passes=10)
         return ldamodel
 
@@ -189,6 +152,73 @@ class LDAModeling:
         undownloadable_documents,
         max_no_topic=10, 
         is_short_words_removed=True):
+
+        """
+        The process of building topic modeling and generating topic-term distribution, which have 8 steps:
+            1) Filter input file to read (pdf/docx to text)
+            2) Data preparation and creating word tokenization
+            3) Generate LDA Model
+            4) Topic Term-distribution
+                4.1) Document-topic (all) distribution 
+                4.2) Document-topic (min) distribution
+            5) Evaluate Model (optional)
+            6) Export pyLDAvis HTML 
+            7) Convert pyLDAvis HTML to Thai
+            8) Word/Term Pair Similairty
+
+        Parameters
+        ----------
+        project_name: string
+        The name of project which received from json input data.
+
+        input_local_root: string
+            A string of downloaded file path save to local root. 
+
+        files: list of filename
+            A list of filename that completed download to local path.
+
+        titles: list of title file
+            A list of title completed download file
+
+        doc_path_file: dictionary of path file
+            A dictionary of local file path, key is document id (doc_id) and value is local file path.
+
+        converted_local_root: string
+            A converted file directory to save an converted input file from unreadable.
+
+        output_dir: string
+            An output 'directory' to save an original pyLDAvis html file.
+
+        pyLDAvis_output_file: string
+            An output 'file name' to save an original pyLDAvis html file.
+
+        th_output_dir: string
+            An output 'directory' to save an thai pyLDAvis html file.
+
+        th_pyLDAvis_output_file: string
+            An output 'file name' to save an thai pyLDAvis html file.
+        
+        max_no_topic: integer, optional (default = 10)
+            A maximum number of topic requested input from user.
+        
+        is_short_words_removed: boolean, optional (default = True)
+            A boolean flag variable to set remove character number function.
+
+        Returns
+        ----------
+        result : a dictionary in which key are the result of performing topic modeling.
+            {
+                "project_id": null,
+                "success": True/False,
+                "errorMessage": null,
+                "topic_chart_url": output_dir + pyLDAvis_output_file,
+                "term_topic_matrix": topic_term_dist,
+                "document_topic_matrix":doc_topic_dist,
+                "topic_stat":n_doc_intopic,
+                "term_pairs":terms_pairs,
+                "unreadable_documents":["..","..",..]
+            }
+        """
 
         print("========== PART 1 : Input Files ==========")
         send_progress(id=id, code="110", keep=True)
@@ -265,10 +295,6 @@ class LDAModeling:
         ldamodel = self.LDAmodel(dictionary2, corpus2, max_no_topic)
         term_dist_topic = ldamodel.show_topics(num_topics=max_no_topic, num_words=1000, log=True, formatted=False)
         # print(term_dist_topic)
-        # handle1=open('term_dist_topic','a+')
-        # handle1.write(str(term_dist_topic))
-        # handle1.write("\n")
-        # handle1.close()
 
         print("========== PART 4 : Topic-term distribution ==========")
         ### Topic-Term Dist

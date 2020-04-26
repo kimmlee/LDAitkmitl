@@ -16,11 +16,51 @@ import logging
 
 class TextDistribution:
 
+    """
+    A TextDistribution class is to find the text statistics of input corpus such as Topic-Term Distribution, Document distribution etc. 
+    This class contains 10 static methods, including: 
+        1) topicTerm_dist()
+        2) _extract_data()
+        3) _df_with_names()
+        4) _series_with_name()
+        5) _find_relevance()
+        6) document_dist()
+        7) docTopic_dist()
+        8) document_dist_min()
+        9) Ndoc_topic()
+        10) compute_term_pairs()
+    """
+
     @staticmethod
     def topicTerm_dist(ldamodel, corpus):
         """
-        Topic-Term Distribution
-        define lambda = 0.6
+        Topic-Term Distribution is a probability score of word in topic which display on pyLDAvis output.
+        This method is called 4 methods in class for calculating the probability that extend from pyLDAvis method, including:
+            1) _extract_data(): generate an extracted data by ldamodel, corpus and dictionary, return a dictionary which contains
+                topic_term_dists, doc_topic_dicts, term_frequency, doc_lengths, and vocab.
+            2) _df_with_names(): reformat Dataframe, use with topic_term_dists and doc_topic_dicts.
+            3) _series_with_name(): reformat Series, use with term_frequency, doc_length, and vocab.
+            4) _find_relevance(): calculate relevance by list of topic, vocab, log_ttd, log_lift, and lambda.
+
+        Parameters
+        ----------
+        ldamodel: a topic model, required.
+        corpus: a copus list of multiplied frequency of document's title with defined number, required.
+            
+        Returns
+        ----------
+        topic_term_dist: a list of dictionaries which contain topics and 1000 terms with their score in lambda (λ) = 0.6
+            [
+                {
+                    'topic_id': 0, 
+                    'terms': [
+                        {
+                            'term': 'ทุจริต', 
+                            'score': 203.54537082463503
+                        },...
+                    ]
+                },...
+            ]
         """
         extract_data = TextDistribution._extract_data(ldamodel, corpus, dictionary=ldamodel.id2word)
         topic_term_dists = TextDistribution._df_with_names(extract_data['topic_term_dists'], 'topic', 'term')
@@ -116,6 +156,11 @@ class TextDistribution:
 
     @staticmethod
     def _find_relevance(topic_list, vocab,log_ttd, log_lift, R=1000, lambda_=0.6):
+        """
+        _find_relevance calculate a probability score of word in topic which display on pyLDAvis output and plus 
+        return water mask in terms 
+        
+        """
         relevance = lambda_ * log_ttd + (1 - lambda_) * log_lift
         id_ = relevance.T.apply(lambda s: s.sort_values(ascending=False).index).head(R)
         relevance_ = relevance.T.apply(lambda s: s.sort_values(ascending=False).values).head(R)
@@ -176,7 +221,30 @@ class TextDistribution:
 
     @staticmethod
     def docTopic_dist(doc_topic_dist,data_df, num_doc, inp_list,dictionary2,ldamodel):
+        """
+        Document-Topic Distribution is a probability score of document in topic.
+        This method is called document_dist() which 
 
+        Parameters
+        ----------
+        ldamodel: a topic model, required.
+        corpus: a copus list of multiplied frequency of document's title with defined number, required.
+            
+        Returns
+        ----------
+        topic_term_dist: a list of dictionaries which contain topics and 1000 terms with their score in lambda (λ) = 0.6
+            [
+                {
+                    'topic_id': 0, 
+                    'terms': [
+                        {
+                            'term': 'ทุจริต', 
+                            'score': 203.54537082463503
+                        },...
+                    ]
+                },...
+            ]
+        """
         for i in range(num_doc):
             doc_id = data_df['doc_id'][i]
             title = data_df['title'][i]
@@ -224,7 +292,10 @@ class TextDistribution:
 
         return n_doc_intopic
 
-    """
+    
+    @staticmethod
+    def compute_term_pairs(topic_term_dist, no_top_terms = 30):
+        """
         This method computes the co-occurence of word pais across different topics. Each word in a pair must be from different topics.
 
         Param:
@@ -280,9 +351,8 @@ class TextDistribution:
             ]
 
 
-    """
-    @staticmethod
-    def compute_term_pairs(topic_term_dist, no_top_terms = 30):
+        """
+
         term_pairs = []
         max_cooccurence_score = 0
         # print(topic_term_dist)
