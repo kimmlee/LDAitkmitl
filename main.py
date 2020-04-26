@@ -30,13 +30,13 @@ converted_local_root = '/Users/dhanamon/Google Drive/TRF_Y61_Mon/05012020_Topic 
 # define an output directory to save an 'original' pyLDAvis html file
 # output_dir = '/Users/Kim/Documents/trf_dir/PyLDAVizOutput/'
 output_dir = '/Users/dhanamon/LDAitkmitl/PyLDAVizOutput/'
-# define an output directory to save an 'original' pyLDAvis html file
+# define an output file name to save an 'original' pyLDAvis html file
 pyLDAvis_output_file = '3pdf_LDAvis_newmm_2n_postag_title_10n.html'
 
 # define an output directory to save an 'thai' pyLDAvis html file
 # th_output_dir = '/Users/Kim/Documents/trf_dir/PyLDAVizOutput/th/'
 th_output_dir = '/Users/dhanamon/LDAitkmitl/PyLDAVizOutput/th/'
-# define an output directory to save an 'thai' pyLDAvis html file
+# define an output file name to save an 'thai' pyLDAvis html file
 th_pyLDAvis_output_file = 'th_3pdf_LDAvis_newmm_2n_postag_title_10n.html'
 
 urls = [
