@@ -1,1 +1,1 @@
-"{'project_id': 1, 'project_name': 'โครงการวิเคราห์ xxx', 'success': False, 'errorMessage': None, 'criteria': 0, 'topic_similarity': None, 'undownload_docs': [], 'unreadable_docs': ['Policy_and_strategy', 'RDG6210003_full', 'RDG6240001_full']}"
+"{'project_id': 1, 'project_name': 'โครงการวิเคราห์ xxx', 'success': False, 'errorMessage': None, 'criteria': 0, 'topic_similarity': None, 'undownload_docs': ['1', '2'], 'unreadable_docs': ['Policy_and_strategy']}"

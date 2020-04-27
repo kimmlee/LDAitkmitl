@@ -56,7 +56,7 @@ class BagOfWordSimilarity:
             doc_path_dict = doc_path_dict_.copy()
             print("========== PART 1 : Input Files ==========")
             if num == 0:
-                doc_path_dict["0"] = streategy_local_root+"Policy_and_strategy.pdf"
+                doc_path_dict["0"] = streategy_local_root+"Policy_and_strategy.docx"
                 strategy_doc_name = "Policy_and_strategy.pdf"
             else:
                 doc_path_dict["0"] = streategy_local_root+"ยุทธศาสตร์_อววน_sep_programs/Policy_and_strategy_only_prog"+str(num)+".docx"

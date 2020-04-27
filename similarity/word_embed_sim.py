@@ -78,7 +78,7 @@ class WordEmbeddedSimilarity:
             # "MRG5980259":"document/docx/MRG5980259.docx",
             # "MRG5980243":"document/docx/MRG5980243.docx"}
             if num == 0:
-                doc_path_dict["Policy_and_strategy"] = streategy_local_root+"Policy_and_strategy.pdf"
+                doc_path_dict["Policy_and_strategy"] = streategy_local_root+"Policy_and_strategy.docx"
                 strategy_doc_name = "Policy_and_strategy.pdf"
             else:
                 doc_path_dict["Policy_and_strategy_only_prog"+str(num)] = streategy_local_root+"ยุทธศาสตร์_อววน_sep_programs/Policy_and_strategy_only_prog"+str(num)+".docx"

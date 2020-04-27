@@ -8,11 +8,12 @@ from Util import Util
 
 # define a input local root 
 
-# input_local_root = '/Users/Kim/Documents/trf_dir/TestDownloadFiles/ori/'
-input_local_root = '/Users/dhanamon/LDAitkmitl/document/TestDownloadFiles/ori/'
-# converted_local_root = '/Users/Kim/Documents/trf_dir/TestDownloadFiles/converted/'
-converted_local_root = '/Users/dhanamon/LDAitkmitl/document/TestDownloadFiles/converted/'
-streategy_local_root = '/Users/dhanamon/LDAitkmitl/document/strategy/'
+input_local_root = '/Users/Kim/Documents/trf_dir/TestDownloadFiles/ori/'
+# input_local_root = '/Users/dhanamon/LDAitkmitl/document/TestDownloadFiles/ori/'
+converted_local_root = '/Users/Kim/Documents/trf_dir/TestDownloadFiles/converted/'
+# converted_local_root = '/Users/dhanamon/LDAitkmitl/document/TestDownloadFiles/converted/'
+streategy_local_root = '/Users/Kim/Documents/trf_dir/strategy/'
+# streategy_local_root = '/Users/dhanamon/LDAitkmitl/document/strategy/'
 
 with open('similarity_json_request.json', 'r') as f:
     request_dict = json.load(f)
