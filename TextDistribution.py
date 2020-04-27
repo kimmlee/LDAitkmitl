@@ -232,18 +232,8 @@ class TextDistribution:
             
         Returns
         ----------
-        topic_term_dist: a list of dictionaries which contain topics and 1000 terms with their score in lambda (λ) = 0.6
-            [
-                {
-                    'topic_id': 0, 
-                    'terms': [
-                        {
-                            'term': 'ทุจริต', 
-                            'score': 203.54537082463503
-                        },...
-                    ]
-                },...
-            ]
+        doc_topic_dist: a list of 
+
         """
         for i in range(num_doc):
             doc_id = data_df['doc_id'][i]
