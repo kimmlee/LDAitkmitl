@@ -51,7 +51,7 @@ class BagOfWordSimilarity:
     def similarity(input_local_root,converted_local_root,streategy_local_root,doc_path_dict_,project_id,project_name, undownload_docs):
         topic_sim = []
         unreadable_docs = []
-        for num in range(1):
+        for num in range(17):
             doc_path_dict = {}
             doc_path_dict = doc_path_dict_.copy()
             print("========== PART 1 : Input Files ==========")
