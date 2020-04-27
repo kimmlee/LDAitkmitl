@@ -65,17 +65,10 @@ class BagOfWordSimilarity:
             print("========== PART 1 : Input Files ==========")
             send_progress(id=id, code="110", keep=True)
             if num == 0:
-<<<<<<< HEAD
-                doc_path_dict["Policy_and_strategy"] = strategy_local_root+"Policy_and_strategy.pdf"
+                doc_path_dict["0"] = strategy_local_root+"Policy_and_strategy.docx"
                 strategy_doc_name = "Policy_and_strategy.pdf"
             else:
-                doc_path_dict["Policy_and_strategy_only_prog"+str(num)] = strategy_local_root+"ยุทธศาสตร์_อววน_sep_programs/Policy_and_strategy_only_prog"+str(num)+".docx"
-=======
-                doc_path_dict["0"] = streategy_local_root+"Policy_and_strategy.docx"
-                strategy_doc_name = "Policy_and_strategy.pdf"
-            else:
-                doc_path_dict["0"] = streategy_local_root+"ยุทธศาสตร์_อววน_sep_programs/Policy_and_strategy_only_prog"+str(num)+".docx"
->>>>>>> upstream/master
+                doc_path_dict["0"] = strategy_local_root+"ยุทธศาสตร์_อววน_sep_programs/Policy_and_strategy_only_prog"+str(num)+".docx"
                 strategy_doc_name = "Policy_and_strategy_only_prog"+str(num)+".docx"
             # print(doc_path_dict)
             data, unreadable_docs = Util.find_read_file(id, doc_path_dict, converted_local_root, unreadable_docs)
