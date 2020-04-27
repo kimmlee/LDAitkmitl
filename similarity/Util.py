@@ -64,7 +64,6 @@ class Util:
         id_list.sort()
         for id_ in id_list:
             files.append(doc_path_dict[str(id_)])
-        print("---->",files)
         to_read_files = []
         for file in files:
             if file.endswith('.pdf'):
