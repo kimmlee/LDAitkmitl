@@ -58,9 +58,13 @@ class Util:
         Finding file in input path file and keep in dictionary
         """
         files = []
+        id_list = []
         for proj_id in doc_path_dict.keys():
-            files.append(doc_path_dict[proj_id])
-        files = natsort.natsorted(files,reverse=True)
+            id_list.append(int(proj_id))
+        id_list.sort()
+        for id_ in id_list:
+            files.append(doc_path_dict[str(id_)])
+        print("---->",files)
         to_read_files = []
         for file in files:
             if file.endswith('.pdf'):

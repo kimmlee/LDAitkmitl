@@ -51,15 +51,15 @@ class BagOfWordSimilarity:
     def similarity(input_local_root,converted_local_root,streategy_local_root,doc_path_dict_,project_id,project_name, undownload_docs):
         topic_sim = []
         unreadable_docs = []
-        for num in range(17):
+        for num in range(1):
             doc_path_dict = {}
             doc_path_dict = doc_path_dict_.copy()
             print("========== PART 1 : Input Files ==========")
             if num == 0:
-                doc_path_dict["Policy_and_strategy"] = streategy_local_root+"Policy_and_strategy.pdf"
+                doc_path_dict["0"] = streategy_local_root+"Policy_and_strategy.pdf"
                 strategy_doc_name = "Policy_and_strategy.pdf"
             else:
-                doc_path_dict["Policy_and_strategy_only_prog"+str(num)] = streategy_local_root+"ยุทธศาสตร์_อววน_sep_programs/Policy_and_strategy_only_prog"+str(num)+".docx"
+                doc_path_dict["0"] = streategy_local_root+"ยุทธศาสตร์_อววน_sep_programs/Policy_and_strategy_only_prog"+str(num)+".docx"
                 strategy_doc_name = "Policy_and_strategy_only_prog"+str(num)+".docx"
             # print(doc_path_dict)
             data, unreadable_docs = Util.find_read_file(doc_path_dict, converted_local_root, unreadable_docs)
