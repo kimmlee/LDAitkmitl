@@ -134,6 +134,7 @@ class TextDistribution:
         
         return {'topic_term_dists': topic_term_dists, 'doc_topic_dists': doc_topic_dists,
             'doc_lengths': doc_lengths, 'vocab': vocab, 'term_frequency': term_freqs}
+
     @staticmethod
     def _df_with_names(data, index_name, columns_name):
         if type(data) == pd.DataFrame:
@@ -282,9 +283,16 @@ class TextDistribution:
 
         return n_doc_intopic
 
-    
+
+    """
+        no_top_terms: integer, optional (default = 20) 
+        The maximum number of term of topic that will be pair
+
+        max_returned_term_pairs: integer, optional (default = -1) -1 mean no limit of term pairs
+        The maximum number of term of topic that will be pair
+    """
     @staticmethod
-    def compute_term_pairs(topic_term_dist, no_top_terms = 30):
+    def compute_term_pairs(topic_term_dist, no_top_terms = 20, max_returned_term_pairs = -1):
         """
         This method computes the co-occurence of word pais across different topics. Each word in a pair must be from different topics.
 
@@ -391,6 +399,9 @@ class TextDistribution:
         # print("+++++++++++++after sorting+++++++++++++")
         sorted_term_pairs = sorted(term_pairs, key=lambda i: i['cooccur_score'], reverse=True)
         # print(sorted_term_pairs)
+
+        if max_returned_term_pairs != -1:
+            del sorted_term_pairs[max_returned_term_pairs:]
 
         counter = 0
         for term_pair in sorted_term_pairs:

@@ -28,17 +28,25 @@ class LDAModeling:
 
     Attributes
     ----------
-    num_cut: integer
+    shortest_num_cut: integer
         The number of word character is less than input number will be remove.
 
-    no_top_terms: integer, optional (default = 30)
+    longest_num_cut: integer
+        The number of word character is longer than input number will be remove.
+
+    no_top_terms: integer, optional (default = 20) set inside TextDistribution.compute_term_pairs()
+        The maximum number of term of topic that will be pair
+
+    max_returned_term_pairs: integer, optional (default = -1) -1 mean no limit of term pairs
         The maximum number of term of topic that will be pair
 
     """
 
     def __init__(self):
-        self.num_cut = 2
+        self.shortest_num_cut = 2
+        self.longest_num_cut = 100
         self.no_top_terms = 20
+        self.max_returned_term_pairs = 100
 
     def to_dataframe(self, data, titles, doc_path_file):
         """
@@ -134,9 +142,9 @@ class LDAModeling:
         ldamodel = LdaModel(corpus, num_top, id2word=dictionary, decay=0.6, random_state=2, passes=10)
         return ldamodel
 
-    def perform_topic_modeling(self, project_name, input_local_root, files, titles, doc_path_file,converted_local_root,
+    def perform_topic_modeling(self, project_name, input_local_root, files, titles, doc_path_file, converted_local_root,
                                output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
-                               max_no_topic = 10, is_short_words_removed = True):
+                               max_no_topic = 10, are_short_and_long_words_removed = True):
         """
         The process of building topic modeling and generating topic-term distribution, which have 8 steps:
             1) Filter input file to read (pdf/docx to text)
@@ -185,7 +193,7 @@ class LDAModeling:
         max_no_topic: integer, optional (default = 10)
             A maximum number of topic requested input from user.
         
-        is_short_words_removed: boolean, optional (default = True)
+        are_short_and_long_words_removed: boolean, optional (default = True)
             A boolean flag variable to set remove character number function.
 
         Returns
@@ -260,9 +268,9 @@ class LDAModeling:
         tfidf = models.TfidfModel(corpus, smartirs='ntc')
         corpus_tfidf = tfidf[corpus]
 
-        if is_short_words_removed:
+        if are_short_and_long_words_removed:
             # Remove character number is less than 2 words off
-            new_lists = TextPreProcessing.cut_character(inp_list, self.num_cut)
+            new_lists = TextPreProcessing.cut_character(inp_list, self.shortest_num_cut, self.longest_num_cut)
         else:
             new_lists = inp_list
 
@@ -332,7 +340,7 @@ class LDAModeling:
         self.localize_pyLDAvis_to_thai(project_name, output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file)
 
         print("========== PART 8 : Word/Term Pair Similairty==========")
-        terms_pairs = TextDistribution.compute_term_pairs(topic_term_dist, self.no_top_terms)
+        terms_pairs = TextDistribution.compute_term_pairs(topic_term_dist, self.no_top_terms, self.max_returned_term_pairs)
         # print(terms_pairs)
 
 
