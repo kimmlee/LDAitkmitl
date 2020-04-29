@@ -54,7 +54,7 @@ class TextPreProcessing:
         return tokens
 
     @staticmethod
-    def cut_character(inp_list, num_cut):
+    def cut_character(inp_list, shortest_num_cut, longest_num_cut):
         """
         A static method, cut_character(inp_list, num_cut), removes word token which is equal or fewer than defined the number of characters.
         
@@ -84,11 +84,11 @@ class TextPreProcessing:
         count = 0
         for i in range(len(inp_list)):
             for j in range(len(inp_list[i])):
-                if len(inp_list[i][j]) <= num_cut:
+                if (len(inp_list[i][j]) <= shortest_num_cut) or (len(inp_list[i][j]) > longest_num_cut):
                     count += 1
                     inp_list[i][j] = '@@@@@@@@@'
 
-        print("The number of short words removed is {0} tokens.".format(count))
+        print("The number of short and long words removed is {0} tokens.".format(count))
         count = 0
         for i in inp_list:
             count += len(i)
