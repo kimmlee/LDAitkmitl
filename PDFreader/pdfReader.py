@@ -34,6 +34,7 @@ def extract_text_from_pdf(pdf_path,layout=True):
  
     if text:
         return text
+
 def thai_distributed_spacing_formatter(text):
     """
     not implement yet
@@ -93,6 +94,7 @@ def regex_formatter(text):
         data = data[:ind+1]+ '่' + data[ind+2:]
         # print("t "+data[ind-expand:ind+expand])
     return data
+
 def dictionary_formatter(text):
     
     data = text
@@ -128,8 +130,16 @@ def dictionary_formatter(text):
     return data
 
 def extract_pdf(fname,includeTable=True,layout=False):
+
     data = extract_text_from_pdf(fname)
     # print("->"+data)
     data = regex_formatter(data)
     data = dictionary_formatter(data)
+
+    # try:
+    #     data = dictionary_formatter(data)
+    # except IndexError as err:
+    #     print("=======ERROR about index of list=======")
+    #     print('Exception message: {0}'.format(err))
+    #     print('Error from => dictionary_formatter()')
     return data

@@ -212,30 +212,43 @@ class LDAModeling:
             }
         """
 
+        if len(files) == 0 and len(titles) == 0:
+            result = {
+                "project_id":None,
+                "success":False,
+                "errorMessage":'Both the number of input files and the number of titles are zero.',
+                "topic_chart_url": None,
+                "term_topic_matrix":None,
+                "document_topic_matrix":None,
+                "topic_stat":None,
+                "term_pairs":None,
+                "unreadable_documents":None
+            }
+            return result
+        elif len(files) != len(titles):
+            result = {
+                "project_id":None,
+                "success":False,
+                "errorMessage":'The number of input files is not equal to the number of titles.',
+                "topic_chart_url": None,
+                "term_topic_matrix":None,
+                "document_topic_matrix":None,
+                "topic_stat":None,
+                "term_pairs":None,
+                "unreadable_documents":None
+            }
+            return result
+
         print("========== PART 1 : Input Files ==========")
         data, unreadable_docs = Util.filter_file_to_read(input_local_root, files, converted_local_root)
         num_doc = len(titles)
 
-        print("========== PART 2 : Data Preparation and Creating Word Tokenization ==========")
-        if len(data) == 0 and len(titles) == 0:
-            result = {
-                "project_id":None,
-                "success":False,
-                "errorMessage":None,
-                "topic_chart_url": output_dir + pyLDAvis_output_file,
-                "term_topic_matrix":None,
-                "document_topic_matrix":None,
-                "topic_stat":None,
-                "term_pairs":None,
-                "unreadable_documents":unreadable_docs
-            }
-            return result
         if len(data) != len(titles):
             result = {
                 "project_id":None,
                 "success":False,
-                "errorMessage":None,
-                "topic_chart_url": output_dir + pyLDAvis_output_file,
+                "errorMessage":'Some files are unreadable, please check their list in unreadable_documents.',
+                "topic_chart_url": None,
                 "term_topic_matrix":None,
                 "document_topic_matrix":None,
                 "topic_stat":None,
@@ -244,6 +257,8 @@ class LDAModeling:
             }
             return result
 
+
+        print("========== PART 2 : Data Preparation and Creating Word Tokenization ==========")
         # Set data into dataframe type
         data_df = self.to_dataframe(data, titles, doc_path_file)
         data_df.head()

@@ -77,11 +77,16 @@ class Util:
                 except Exception as inst:
                     print('Exception message: {0}'.format(inst))
                     unreadable_docs.append(f_list[-2])
-            except:
+            except IndexError as err:
+                print("=======ERROR about index of list from dictionary_formatter() in pdfReader=======")
+                print('Exception message: {0}'.format(err))
+                unreadable_docs.append(f_list[-2])
+            except Exception as inst:
                 print("=======ERROR cannot find the below file in a given path=======")
+                print('Exception message: {0}'.format(inst))
                 print(file_path, f_list)
                 unreadable_docs.append(f_list[-2])
-                print('+++++++++++++++++++')
+
 
             # create rd_list for create training data
         #         data_file_text.close()
