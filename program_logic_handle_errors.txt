@@ -1,0 +1,27 @@
+logic การทำงานของโปรแกรมตอนนี้ คือ
+
+1) หากมี file ที่ download ไม่ได้ จากหลังบ้าน โหลด จากหน้าบ้าน
+   i.e. ML Backend ---download---> from Web FrontEnd
+
+   โปรแกรมยังทำงานอยู่
+
+   โดยประมวลเฉพาะเอกสารที่โหลดได้
+   โดยจะมี list ของ doc_id ของเอกสารที่โหลดไม่ได้
+   success: True
+
+
+2) หากมี file ที่ Read ไม่ได้ โดย ML Backend
+   i.e. Unparsable/unreadable, encounter enexpected error when reading
+
+   โปรแกรมจะ "หยุด" การประมวลผล
+
+   โดยจะมี list ของ doc_id ของเอกสารที่อ่านไม่ได้
+   success: False
+
+
+3) ถ้าเจอทั้งคู่ (สองกรณี)
+
+   โปรแกรมจะ "หยุด" การประมวลผล เนื่องจากกรณีที่ 2 รุนแรง
+   ผู้ใช้ต้องเอาไฟล์นั้นออกก่อน
+
+"{'project_id': 1, 'success': False, 'errorMessage': 'Some files are unreadable, please check their list in unreadable_documents.', 'topic_chart_url': None, 'term_topic_matrix': None, 'document_topic_matrix': None, 'topic_stat': None, 'term_pairs': None, 'unreadable_documents': ['2'], 'undownloadable_documents': ['1']}"
