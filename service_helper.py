@@ -124,8 +124,8 @@ def get_status_message(status_code):
         '410': "{} is not downloadable",
 
         '510': "input dataset failed on document {}",
-        "601": "document download process is failed due to unreachable url(s)",
-        "602": "duplicated urls were found on the payload"
+        "601": "both the number of input files and the number of titles are zero",
+        "602": "the number of input files is not equal to the number of titles"
     }
 
     return statuses.get(str(status_code), "Unknown Error")

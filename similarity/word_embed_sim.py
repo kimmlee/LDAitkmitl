@@ -98,9 +98,20 @@ class WordEmbeddedSimilarity:
             # print(num_doc)
 
             print("========== PART 2 : Data Preparation ==========")
+
+            error_payload = {
+                "topic_similarity": {},
+                "unreadable_documents": unreadable_docs,
+                "undownloadable_documents": undownload_docs
+            }
+
             if num_doc == 0 and num_title == 0:
+                print("[E] Both the number of input files and the number of titles are zero. Canceling this job...")
+                send_progress(id=id, code="601", keep=True, data=str(error_payload))
                 return
             if num_doc != num_title:
+                print("[E] The number of input files is not equal to the number of titles. Canceling this job...")
+                send_progress(id=id, code="602", keep=True, data=str(error_payload))
                 return
 
             send_progress(id=id, code="S20", payload=[part])

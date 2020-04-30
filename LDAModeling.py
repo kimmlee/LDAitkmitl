@@ -233,20 +233,25 @@ class LDAModeling:
         data, unreadable_docs = Util.filter_file_to_read(id, input_local_root, files, converted_local_root)
         num_doc = len(titles)
 
-        print("========== PART 2 : Data Preparation and Creating Word Tokenization ==========")
+        error_payload = {
+            "unreadable_documents": unreadable_docs,
+            "undownloadable_documents": undownloadable_documents
+        }
 
         if len(data) == 0 and len(titles) == 0:
-            print("[E] Data is not well prepared. Canceling this job...")
-            send_progress(id=id, code="601", keep=True)
+            print("[E] Both the number of input files and the number of titles are zero. Canceling this job...")
+            send_progress(id=id, code="601", keep=True, data=str(error_payload))
             return
 
         if len(data) != len(titles):
-            print("[E] Data is duplicated. Canceling this job...")
-            send_progress(id=id, code="602", keep=True)
+            print("[E] The number of input files is not equal to the number of titles. Canceling this job...")
+            send_progress(id=id, code="602", keep=True, data=str(error_payload))
             return
 
         send_progress(id=id, code="120", keep=True)
 
+
+        print("========== PART 2 : Data Preparation and Creating Word Tokenization ==========")
         # Set data into dataframe type
         data_df = self.to_dataframe(data, titles, doc_path_file)
         data_df.head()
