@@ -23,5 +23,6 @@ logic การทำงานของโปรแกรมตอนนี้ �
 
    โปรแกรมจะ "หยุด" การประมวลผล เนื่องจากกรณีที่ 2 รุนแรง
    ผู้ใช้ต้องเอาไฟล์นั้นออกก่อน
+   success: False
 
 "{'project_id': 1, 'success': False, 'errorMessage': 'Some files are unreadable, please check their list in unreadable_documents.', 'topic_chart_url': None, 'term_topic_matrix': None, 'document_topic_matrix': None, 'topic_stat': None, 'term_pairs': None, 'unreadable_documents': ['2'], 'undownloadable_documents': ['1']}"
