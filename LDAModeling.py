@@ -79,6 +79,16 @@ class LDAModeling:
         data_df = pd.DataFrame.from_dict(data_df_dict)
         return data_df
 
+    def get_unreadable_doc_ids(self, unreadable_doc_names, doc_path_file):
+        unreadable_docs = []
+        for unreadable_doc_name in unreadable_doc_names:
+            for key, value in doc_path_file.items():
+                if unreadable_doc_name in value:
+                    id_ = key
+            unreadable_docs.append(id_)
+        return unreadable_docs
+
+
     def localize_pyLDAvis_to_thai(self, project_name, en_input_dir, en_pyLDAvis_file, th_output_dir, th_pyLDAvis_file):
         """
         A static method, change a original pyLDAvis html to thai version
@@ -211,6 +221,7 @@ class LDAModeling:
                 "unreadable_documents":["..","..",..]
             }
         """
+        unreadable_docs = []
 
         if len(files) == 0 and len(titles) == 0:
             result = {
@@ -222,7 +233,7 @@ class LDAModeling:
                 "document_topic_matrix":None,
                 "topic_stat":None,
                 "term_pairs":None,
-                "unreadable_documents":None
+                "unreadable_documents":unreadable_docs
             }
             return result
         elif len(files) != len(titles):
@@ -235,15 +246,19 @@ class LDAModeling:
                 "document_topic_matrix":None,
                 "topic_stat":None,
                 "term_pairs":None,
-                "unreadable_documents":None
+                "unreadable_documents":unreadable_docs
             }
             return result
 
         print("========== PART 1 : Input Files ==========")
-        data, unreadable_docs = Util.filter_file_to_read(input_local_root, files, converted_local_root)
+        data, unreadable_doc_names = Util.filter_file_to_read(input_local_root, files, converted_local_root)
         num_doc = len(titles)
 
-        if len(data) != len(titles):
+
+        if len(data) != num_doc:
+            if len(unreadable_doc_names) > 0:
+                unreadable_docs = self.get_unreadable_doc_ids(unreadable_doc_names, doc_path_file)
+
             result = {
                 "project_id":None,
                 "success":False,

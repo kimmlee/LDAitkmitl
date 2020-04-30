@@ -145,7 +145,7 @@ for doc_id, document in documents.items():
 # print(documents)
 
 ldamodeling = LDAModeling()
-result = ldamodeling.perform_topic_modeling(project_name, input_local_root, to_process_files, to_process_titles,doc_path_file, converted_local_root,
+result = ldamodeling.perform_topic_modeling(project_name, input_local_root, to_process_files, to_process_titles, doc_path_file, converted_local_root,
                                    output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file,
                                    max_no_topic)
 
