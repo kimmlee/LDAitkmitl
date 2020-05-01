@@ -80,6 +80,16 @@ class LDAModeling:
         data_df = pd.DataFrame.from_dict(data_df_dict)
         return data_df
 
+    def get_unreadable_doc_ids(self, unreadable_doc_names, doc_path_file):
+        unreadable_docs = []
+        for unreadable_doc_name in unreadable_doc_names:
+            for key, value in doc_path_file.items():
+                if unreadable_doc_name in value:
+                    id_ = key
+            unreadable_docs.append(id_)
+        return unreadable_docs
+
+
     def localize_pyLDAvis_to_thai(self, project_name, en_input_dir, en_pyLDAvis_file, th_output_dir, th_pyLDAvis_file):
         """
         A static method, change a original pyLDAvis html to thai version
@@ -228,24 +238,29 @@ class LDAModeling:
             }
         """
 
-        print("========== PART 1 : Input Files ==========")
-        send_progress(id=id, code="110", keep=True)
-        data, unreadable_docs = Util.filter_file_to_read(id, input_local_root, files, converted_local_root)
-        num_doc = len(titles)
-
         error_payload = {
-            "unreadable_documents": unreadable_docs,
+            "unreadable_documents": [],
             "undownloadable_documents": undownloadable_documents
         }
 
-        if len(data) == 0 and len(titles) == 0:
+        if len(files) == 0 and len(titles) == 0:
             print("[E] Both the number of input files and the number of titles are zero. Canceling this job...")
             send_progress(id=id, code="601", keep=True, data=str(error_payload))
             return
-
-        if len(data) != len(titles):
+        elif len(files) != len(titles):
             print("[E] The number of input files is not equal to the number of titles. Canceling this job...")
             send_progress(id=id, code="602", keep=True, data=str(error_payload))
+            return
+
+        print("========== PART 1 : Input Files ==========")
+        send_progress(id=id, code="110", keep=True)
+        data, unreadable_doc_names = Util.filter_file_to_read(id, input_local_root, files, converted_local_root)
+        num_doc = len(titles)
+
+        if len(data) != num_doc:
+            if len(unreadable_doc_names) > 0:
+                error_payload['unreadable_documents'] = self.get_unreadable_doc_ids(unreadable_doc_names, doc_path_file)
+            send_progress(id=id, code="603", keep=True, data=str(error_payload))
             return
 
         send_progress(id=id, code="120", keep=True)
@@ -371,7 +386,7 @@ class LDAModeling:
             "document_topic_matrix": doc_topic_dist,
             "topic_stat": n_doc_intopic,
             "term_pairs": terms_pairs,
-            "unreadable_documents": unreadable_docs,
+            "unreadable_documents": error_payload['unreadable_documents'],
             "undownloadable_documents": undownloadable_documents
         }
 

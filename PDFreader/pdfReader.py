@@ -96,38 +96,41 @@ def regex_formatter(text):
     return data
 
 def dictionary_formatter(text):
-    
     data = text
     aum_ = os.path.join(os.path.dirname(__file__), "aum_list.txt")
     aum_typo = os.path.join(os.path.dirname(__file__), "aum_typo_list.txt")
-    f = codecs.open(aum_,"r","utf-8")
+    f = codecs.open(aum_, "r", "utf-8")
     doc = f.read()
     f.close()
     aum_list = doc.split("\n")
 
-    f = codecs.open(aum_typo,"r","utf-8")
+    f = codecs.open(aum_typo, "r", "utf-8")
     doc = f.read()
     f.close()
     aum_typo_list = doc.split("\n")
-    
+
     for i in range(len(aum_typo_list)):
         if aum_typo_list[i] in data and len(aum_typo_list[i]) > 3:
             # print(aum_typo_list[i],aum_list[i])
-            data = data.replace(aum_typo_list[i],aum_list[i])
+            data = data.replace(aum_typo_list[i], aum_list[i])
 
     lexto = LexTo()
     words, types = lexto.tokenize(data)
     # print(words)
-    zz = zip(words,types)
+    zz = zip(words, types)
     doc = ''
-    for w,t in zz:
-        if t == 'unknown' and w[-1] == '่':
-            # print(w[:-1])
-            w = w[:-1]
-        doc += w
+    # print("zip zz: {0}".format(zz))
+    for w, t in zz:
+        # print("w: '{0}', t: {1}".format(w, t))
+        if(len(w) > 0):
+            if t == 'unknown' and w[-1] == '่':
+                # print(w[:-1])
+                w = w[:-1]
+            doc += w
     data = doc
-    data.replace('เทำ','เท่า')
+    data.replace('เทำ', 'เท่า')
     return data
+
 
 def extract_pdf(fname,includeTable=True,layout=False):
 
