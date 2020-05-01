@@ -132,6 +132,10 @@ ldamodeling.perform_topic_modeling(
     undownload_docs,
     max_no_topic)
 
+# json_formatted_str = json.dumps(str(result), indent=2)
+# print(json_formatted_str)
+
+
 # max_no_topic = 10
 
 # print('========== Beginning file download with urllib2. ==========')
