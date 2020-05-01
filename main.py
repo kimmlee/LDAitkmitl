@@ -91,7 +91,7 @@ titles = [
             'การพัฒนาหน้ากากป้องกันสารเคมี-ชีวะ สำหรับพลประจำรถถังเพื่อใช้ในประเทศ'
             ]
 
-with open('json_request_small.json', 'r') as f:
+with open('json_request.json', 'r') as f:
     request_dict = json.load(f)
 
 # with open('json_request.json', 'r') as f:
