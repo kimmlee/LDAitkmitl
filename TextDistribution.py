@@ -12,7 +12,7 @@ import gensim
 from collections import namedtuple
 import json
 import logging
-
+from collections import defaultdict
 
 class TextDistribution:
 
@@ -285,20 +285,16 @@ class TextDistribution:
 
 
     """
+        This method computes the co-occurence of word pais across different topics. Each word in a pair must be from different topics.
+        
+        Param:
         no_top_terms: integer, optional (default = 20) 
         The maximum number of term of topic that will be pair
 
         max_returned_term_pairs: integer, optional (default = -1) -1 mean no limit of term pairs
         The maximum number of term of topic that will be pair
-    """
-    @staticmethod
-    def compute_term_pairs(topic_term_dist, no_top_terms = 20, max_returned_term_pairs = -1):
-        """
-        This method computes the co-occurence of word pais across different topics. Each word in a pair must be from different topics.
-
-        Param:
-
-            "term_topic_matrix":[
+    
+            "topic_term_dist":[
                 {
                     "topic_no":1, //from 1-10
                     "terms":[
@@ -349,49 +345,83 @@ class TextDistribution:
             ]
 
 
-        """
+    """
+    @staticmethod
+    def compute_term_pairs(topic_term_dist, no_top_terms=20, max_returned_term_pairs=-1):
 
         term_pairs = []
+        term_pairs_dict = defaultdict(dict)
         max_cooccurence_score = 0
-        # print(topic_term_dist)
-        # print("No of Topics: {0}".format(len(topic_term_dist)))
-        for each_term_topic_1 in topic_term_dist:
-            topic_no_1 = each_term_topic_1['topic_no']
-            # print("topic id 1: {0}".format(topic_no_1))
 
-            for each_term_topic_2 in topic_term_dist:
-                topic_no_2 = each_term_topic_2['topic_no']
+        try:
+            # print(topic_term_dist)
+            # print("No of Topics: {0}".format(len(topic_term_dist)))
+            for each_term_topic_1 in topic_term_dist:
+                topic_no_1 = each_term_topic_1['topic_no']
+                # print("topic id 1: {0}".format(topic_no_1))
 
-                # compare terms from two different topics as half (triangle) matrix regardless of the same number of topic_no
-                if (int(topic_no_1) < int(topic_no_2)):
-                    # print("topic id 2: {0}".format(topic_no_2))
+                for each_term_topic_2 in topic_term_dist:
+                    topic_no_2 = each_term_topic_2['topic_no']
 
-                    terms_1 = each_term_topic_1['terms']
-                    for i in range(min(len(terms_1), no_top_terms)):
-                        term_pair = {}
-                        term_1 = terms_1[i]
-                        score_1 = term_1['score']
-                        # print('topic id {0}, term {1}: "{2}": score={3}'.format(topic_no_1, i, term_1['term'], score_1))
+                    # compare terms from two different topics as half (triangle) matrix regardless of the same number of topic_no
+                    if (int(topic_no_1) < int(topic_no_2)):
+                        # print("topic id 2: {0}".format(topic_no_2))
+                        # print("------------------")
 
-                        terms_2 = each_term_topic_2['terms']
-                        for j in range(min(len(terms_2), no_top_terms)):
-                            term_2 = terms_2[j]
-                            score_2 = term_2['score']
-                            # print('topic id {0}, term {1}: "{2}": score={3}'.format(topic_no_2, j, term_2['term'], score_2))
+                        terms_1 = each_term_topic_1[
+                            'terms']  # get a list of ranked terms, containing a dictionary {"term":"xxx", "score":0.12345}
+                        for i in range(min(len(terms_1), no_top_terms)):
+                            term_1 = terms_1[i]
+                            score_1 = term_1['score']
+                            # print('topic id {0}, term {1}: "{2}": score={3}'.format(topic_no_1, i, term_1['term'], score_1))
 
-                            if(term_1['term'] !=  term_2['term']):
-                                cooccurence_score = score_1 * score_2
-                                term_pair['term_1'] = term_1['term']
-                                term_pair['term_2'] = term_2['term']
-                                term_pair['cooccur_score'] = cooccurence_score
-                                if max_cooccurence_score < cooccurence_score:
-                                    max_cooccurence_score = cooccurence_score
-                                # print('{0}, {1}: co-occurence = {2}'.format(term_1['term'], term_2['term'], cooccurence_score))
-                                # print("------------------------------------------------------------------------------------")
+                            terms_2 = each_term_topic_2['terms']
+                            for j in range(min(len(terms_2), no_top_terms)):
+                                term_2 = terms_2[j]
+                                score_2 = term_2['score']
 
-                                term_pairs.append(term_pair)
+                                if (term_1['term'] != term_2['term']):  # must not be the same words
 
-                            term_pair = {}
+                                    # sort the key pair in an alphabetical order
+                                    term_pair_key = []
+                                    term_pair_key.append(term_1['term'])
+                                    term_pair_key.append(term_2['term'])
+                                    term_pair_key.sort()
+
+                                    # compute cooccurence_score from two terms that come from different topics
+                                    cooccurence_score = score_1 * score_2
+
+                                    if (term_pair_key[0] in term_pairs_dict) and (term_pair_key[1] in term_pairs_dict[term_pair_key[0]]):
+                                        term_pairs_dict[term_pair_key[0]][term_pair_key[1]] += cooccurence_score
+                                        if max_cooccurence_score < term_pairs_dict[term_pair_key[0]][term_pair_key[1]]:
+                                            max_cooccurence_score = term_pairs_dict[term_pair_key[0]][term_pair_key[1]]
+                                    elif (term_pair_key[1] in term_pairs_dict) and (term_pair_key[0] in term_pairs_dict[term_pair_key[1]]):  # enable a sparse triangle matrix, by checking whether the key exists either left or right
+                                        term_pairs_dict[term_pair_key[1]][term_pair_key[0]] += cooccurence_score
+                                        if max_cooccurence_score < term_pairs_dict[term_pair_key[1]][term_pair_key[0]]:
+                                            max_cooccurence_score = term_pairs_dict[term_pair_key[1]][term_pair_key[0]]
+                                    else:  # add a new key pair
+                                        term_pairs_dict[term_pair_key[0]][term_pair_key[1]] = cooccurence_score
+                                        if max_cooccurence_score < cooccurence_score:
+                                            max_cooccurence_score = cooccurence_score
+
+
+
+            # convert from default dictionary to a list of dictionary for sorting
+            for key1 in term_pairs_dict:
+                for key2 in term_pairs_dict[key1]:
+                    term_pair = {}
+                    term_pair['term_1'] = key1
+                    term_pair['term_2'] = key2
+                    term_pair['cooccur_score'] = term_pairs_dict[key1][key2]
+
+                    term_pairs.append(term_pair)
+
+        except KeyError as err:
+            print("=======KeyError: A given Key Pair is in a wrong format, please enter a key pair as a tuple.=======")
+            print('Exception message: {0}'.format(err))
+        except Exception as err:
+            print("=======Other Errors about Default Dictionary.=======")
+            print('Exception message: {0}'.format(err))
 
         # print("============before sorting===========")
         # print(term_pairs)
@@ -403,10 +433,15 @@ class TextDistribution:
         if max_returned_term_pairs != -1:
             del sorted_term_pairs[max_returned_term_pairs:]
 
+        # print(sorted_term_pairs)
+        # print("max_cooccurence_score: {0}".format(max_cooccurence_score))
+
         counter = 0
         for term_pair in sorted_term_pairs:
-            term_pair['cooccur_percent'] = (term_pair['cooccur_score']/max_cooccurence_score)*100
+            term_pair['cooccur_percent'] = (term_pair['cooccur_score'] / max_cooccurence_score) * 100
             sorted_term_pairs[counter] = term_pair
             counter += 1
+
+        print(sorted_term_pairs)
 
         return sorted_term_pairs

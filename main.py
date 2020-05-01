@@ -155,6 +155,10 @@ result['undownloadable_documents'] = undownload_docs
 with open('result.json', 'w', encoding='utf-8') as outfile:
     json.dump(str(result), outfile, ensure_ascii=False, indent=4)
 
+# json_formatted_str = json.dumps(str(result), indent=2)
+# print(json_formatted_str)
+
+
 # max_no_topic = 10
 
 # print('========== Beginning file download with urllib2. ==========')
