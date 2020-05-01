@@ -370,7 +370,7 @@ class LDAModeling:
         self.localize_pyLDAvis_to_thai(project_name, output_dir, pyLDAvis_output_file, th_output_dir, th_pyLDAvis_output_file)
 
         print("========== PART 8 : Word/Term Pair Similairty==========")
-        terms_pairs = TextDistribution.compute_term_pairs(topic_term_dist, self.no_top_terms, self.max_returned_term_pairs)
+        terms_pairs = TextDistribution.compute_term_pairs_exp_max(topic_term_dist, self.no_top_terms, self.max_returned_term_pairs)
         # print(terms_pairs)
 
 
