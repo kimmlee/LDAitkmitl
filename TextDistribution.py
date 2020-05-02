@@ -389,7 +389,7 @@ class TextDistribution:
                                     term_pair_key.sort()
 
                                     # compute cooccurence_score from two terms that come from different topics
-                                    cooccurence_score = score_1 * score_2
+                                    cooccurence_score = math.exp(score_1) * math.exp(score_2)
 
                                     if (term_pair_key[0] in term_pairs_dict) and (term_pair_key[1] in term_pairs_dict[term_pair_key[0]]):
                                         term_pairs_dict[term_pair_key[0]][term_pair_key[1]] += cooccurence_score
