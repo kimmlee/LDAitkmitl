@@ -221,7 +221,7 @@ class TextDistribution:
         return doc_topic_dist
 
     @staticmethod
-    def docTopic_dist(doc_topic_dist,data_df, num_doc, inp_list,dictionary2,ldamodel):
+    def docTopic_dist(doc_topic_dist,data_df, max_no_topic, inp_list,dictionary2,ldamodel):
         """
         Document-Topic Distribution is a probability score of document in topic.
         This method is called document_dist() which 
@@ -236,7 +236,7 @@ class TextDistribution:
         doc_topic_dist: a list of 
 
         """
-        for i in range(num_doc):
+        for i in range(max_no_topic):
             doc_id = data_df['doc_id'][i]
             title = data_df['title'][i]
             content = inp_list[i]
@@ -264,13 +264,13 @@ class TextDistribution:
         return doc_dist_dict
 
     @staticmethod
-    def Ndoc_topic(n_doc_intopic,num_doc, data_df, inp_list, dictionary2, ldamodel):
+    def num_doc_topic(n_doc_intopic, max_no_topic, data_df, inp_list, dictionary2, ldamodel):
 
         doc_dist_dict = {}
-        for i in range(num_doc):
+        for i in range(max_no_topic):
             doc_dist_dict[i] = 0
         print(doc_dist_dict)
-        for i in range(num_doc):
+        for i in range(max_no_topic):
             doc_id = data_df['doc_id'][i]
             title = data_df['title'][i]
             content = inp_list[i]
@@ -347,7 +347,7 @@ class TextDistribution:
 
     """
     @staticmethod
-    def compute_term_pairs(topic_term_dist, no_top_terms=20, max_returned_term_pairs=-1):
+    def compute_term_pairs_exp_max(topic_term_dist, no_top_terms=20, max_returned_term_pairs=-1):
 
         term_pairs = []
         term_pairs_dict = defaultdict(dict)
@@ -392,19 +392,19 @@ class TextDistribution:
                                     cooccurence_score = math.exp(score_1) * math.exp(score_2)
 
                                     if (term_pair_key[0] in term_pairs_dict) and (term_pair_key[1] in term_pairs_dict[term_pair_key[0]]):
-                                        term_pairs_dict[term_pair_key[0]][term_pair_key[1]] += cooccurence_score
-                                        if max_cooccurence_score < term_pairs_dict[term_pair_key[0]][term_pair_key[1]]:
-                                            max_cooccurence_score = term_pairs_dict[term_pair_key[0]][term_pair_key[1]]
+                                        if term_pairs_dict[term_pair_key[0]][term_pair_key[1]] < cooccurence_score:
+                                            term_pairs_dict[term_pair_key[0]][term_pair_key[1]] = cooccurence_score
+                                            if max_cooccurence_score < term_pairs_dict[term_pair_key[0]][term_pair_key[1]]:
+                                                max_cooccurence_score = term_pairs_dict[term_pair_key[0]][term_pair_key[1]]
                                     elif (term_pair_key[1] in term_pairs_dict) and (term_pair_key[0] in term_pairs_dict[term_pair_key[1]]):  # enable a sparse triangle matrix, by checking whether the key exists either left or right
-                                        term_pairs_dict[term_pair_key[1]][term_pair_key[0]] += cooccurence_score
-                                        if max_cooccurence_score < term_pairs_dict[term_pair_key[1]][term_pair_key[0]]:
-                                            max_cooccurence_score = term_pairs_dict[term_pair_key[1]][term_pair_key[0]]
+                                        if term_pairs_dict[term_pair_key[1]][term_pair_key[0]] < cooccurence_score:
+                                            term_pairs_dict[term_pair_key[1]][term_pair_key[0]] = cooccurence_score
+                                            if max_cooccurence_score < term_pairs_dict[term_pair_key[1]][term_pair_key[0]]:
+                                                max_cooccurence_score = term_pairs_dict[term_pair_key[1]][term_pair_key[0]]
                                     else:  # add a new key pair
                                         term_pairs_dict[term_pair_key[0]][term_pair_key[1]] = cooccurence_score
                                         if max_cooccurence_score < cooccurence_score:
                                             max_cooccurence_score = cooccurence_score
-
-
 
             # convert from default dictionary to a list of dictionary for sorting
             for key1 in term_pairs_dict:

@@ -339,14 +339,13 @@ class LDAModeling:
         print("========== PART 4-1 : Document-topic (all) distribution ==========")
         ### Doc_topic_all_dist
         doc_topic_dist = []
-        doc_topic_dist = TextDistribution.docTopic_dist(doc_topic_dist, data_df, num_doc, inp_list, dictionary2,
-                                                        ldamodel)
+        doc_topic_dist = TextDistribution.docTopic_dist(doc_topic_dist, data_df, max_no_topic, inp_list,dictionary2,ldamodel)
         # print(doc_topic_dist)
 
         print("========== PART 4-2 : Document-topic (min) distribution ==========")
         ### Doc_topic_min_dist
         n_doc_intopic = []
-        n_doc_intopic = TextDistribution.Ndoc_topic(n_doc_intopic, num_doc, data_df, inp_list, dictionary2, ldamodel)
+        n_doc_intopic = TextDistribution.num_doc_topic(n_doc_intopic, max_no_topic, data_df, inp_list, dictionary2, ldamodel)
         # print(n_doc_intopic)
 
         print("========== PART 5 : Evaluate Model ==========")
@@ -373,7 +372,7 @@ class LDAModeling:
                                        th_pyLDAvis_output_file)
 
         print("========== PART 8 : Word/Term Pair Similairty==========")
-        terms_pairs = TextDistribution.compute_term_pairs(topic_term_dist, self.no_top_terms, self.max_returned_term_pairs)
+        terms_pairs = TextDistribution.compute_term_pairs_exp_max(topic_term_dist, self.no_top_terms, self.max_returned_term_pairs)
         # print(terms_pairs)
 
         send_progress(id=id, code="180", keep=True)
