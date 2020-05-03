@@ -31,13 +31,13 @@ converted_local_root = '/Users/Kim/Documents/trf_dir/TestDownloadFiles/converted
 output_dir = '/Users/Kim/Documents/trf_dir/PyLDAVizOutput/'
 # output_dir = '/Users/dhanamon/LDAitkmitl/PyLDAVizOutput/'
 # define an output file name to save an 'original' pyLDAvis html file
-pyLDAvis_output_file = '3pdf_LDAvis_newmm_2n_postag_title_10n.html'
+pyLDAvis_output_file = '3pdf_LDAvis_newmm_2n_postag_title_10n_noSorted.html'
 
 # define an output directory to save an 'thai' pyLDAvis html file
 th_output_dir = '/Users/Kim/Documents/trf_dir/PyLDAVizOutput/th/'
 # th_output_dir = '/Users/dhanamon/LDAitkmitl/PyLDAVizOutput/th/'
 # define an output file name to save an 'thai' pyLDAvis html file
-th_pyLDAvis_output_file = 'th_3pdf_LDAvis_newmm_2n_postag_title_10n.html'
+th_pyLDAvis_output_file = 'th_3pdf_LDAvis_newmm_2n_postag_title_10n_noSorted.html'
 
 urls = [
         # 'https://elibrary.trf.or.th/fullP/SRI61X0602/SRI61X0602_full.pdf',
@@ -91,7 +91,7 @@ titles = [
             'การพัฒนาหน้ากากป้องกันสารเคมี-ชีวะ สำหรับพลประจำรถถังเพื่อใช้ในประเทศ'
             ]
 
-with open('json_request_small.json', 'r') as f:
+with open('json_request.json', 'r') as f:
     request_dict = json.load(f)
 
 # with open('json_request.json', 'r') as f:
