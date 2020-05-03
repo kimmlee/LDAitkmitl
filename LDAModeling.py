@@ -331,21 +331,15 @@ class LDAModeling:
         # print(dictionary2)
         topic_term_dist = TextDistribution.topicTerm_dist(ldamodel, corpus2)
         # print(topic_term_dist)
-        # handle1=open('topic_term_dist_6','a+')
-        # handle1.write(str(topic_term_dist))
-        # handle1.write("\n")
-        # handle1.close()
 
         print("========== PART 4-1 : Document-topic (all) distribution ==========")
         ### Doc_topic_all_dist
-        doc_topic_dist = []
-        doc_topic_dist = TextDistribution.docTopic_dist(doc_topic_dist, data_df, max_no_topic, inp_list,dictionary2,ldamodel)
+        doc_topic_dist = TextDistribution.docTopic_dist(data_df, num_doc, inp_list, dictionary2, ldamodel)
         # print(doc_topic_dist)
 
         print("========== PART 4-2 : Document-topic (min) distribution ==========")
         ### Doc_topic_min_dist
-        n_doc_intopic = []
-        n_doc_intopic = TextDistribution.num_doc_topic(n_doc_intopic, max_no_topic, data_df, inp_list, dictionary2, ldamodel)
+        n_doc_in_topic = TextDistribution.num_doc_topic(num_doc, data_df, inp_list, dictionary2, ldamodel, max_no_topic)
         # print(n_doc_intopic)
 
         print("========== PART 5 : Evaluate Model ==========")
@@ -383,7 +377,7 @@ class LDAModeling:
             "topic_chart_url": topic_chart_url,
             "term_topic_matrix": topic_term_dist,
             "document_topic_matrix": doc_topic_dist,
-            "topic_stat": n_doc_intopic,
+            "topic_stat": n_doc_in_topic,
             "term_pairs": terms_pairs,
             "unreadable_documents": error_payload['unreadable_documents'],
             "undownloadable_documents": undownloadable_documents

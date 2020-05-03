@@ -198,15 +198,15 @@ class TextDistribution:
                         "terms":term_list}
             topic_term_dist.append(topic_term)
             x+=1
-            print('-'*20)
+            #print('-'*20)
         # print(topic_term_dist)
         return topic_term_dist  
 
     @staticmethod
-    def document_dist(doc_id, title, text, id_ ,dictionary2,ldamodel,doc_topic_dist):
+    def document_dist(doc_id, title, text, id_ ,dictionary2, ldamodel, doc_topic_dist):
         bow = dictionary2.doc2bow(text)
-        doc_dist = ldamodel.get_document_topics(bow, minimum_probability=0, minimum_phi_value=None,per_word_topics=False)
-        print(doc_id, title)
+        doc_dist = ldamodel.get_document_topics(bow, minimum_probability=0, minimum_phi_value=None, per_word_topics=False)
+        # print(doc_id, title)
 
         doc_topic_list = []
         for i in doc_dist:
@@ -216,12 +216,12 @@ class TextDistribution:
         doc_topic_dist.append(doc_dict)
 
 
-        print(doc_dist)
-        print('-------------------------------------')
+        # print(doc_dist)
+        # print('-------------------------------------')
         return doc_topic_dist
 
     @staticmethod
-    def docTopic_dist(doc_topic_dist,data_df, max_no_topic, inp_list,dictionary2,ldamodel):
+    def docTopic_dist(data_df, num_doc, inp_list,dictionary2, ldamodel):
         """
         Document-Topic Distribution is a probability score of document in topic.
         This method is called document_dist() which 
@@ -236,20 +236,24 @@ class TextDistribution:
         doc_topic_dist: a list of 
 
         """
-        for i in range(max_no_topic):
+        doc_topic_dist = []
+        for i in range(num_doc):
             doc_id = data_df['doc_id'][i]
             title = data_df['title'][i]
             content = inp_list[i]
-            doc_topic_dist = TextDistribution.document_dist(doc_id, title, content, i,dictionary2,ldamodel,doc_topic_dist)
+            doc_topic_dist = TextDistribution.document_dist(doc_id, title, content, i, dictionary2, ldamodel, doc_topic_dist)
+
+        # print(doc_topic_dist)
+        # print("************************************************")
         return doc_topic_dist
 
     @staticmethod
     def document_dist_min(doc_id, title, text, doc_dist_dict, dictionary2, ldamodel):
         bow = dictionary2.doc2bow(text)
         doc_dist = ldamodel.get_document_topics(bow, minimum_probability=0.1, minimum_phi_value=None,per_word_topics=False)
-        print(doc_id, title)
+        # print(doc_id, title)
 
-       # add to list
+        # add to list
         for i in doc_dist:
             # print(doc_dist_dict)
             # print(i[0])
@@ -259,29 +263,34 @@ class TextDistribution:
             # print(i, end=' ')
             # print(doc_dist_dict)
 
-        print()
-        print('-------------------------------------')
+        # print()
+        # print('-------------------------------------')
         return doc_dist_dict
 
     @staticmethod
-    def num_doc_topic(n_doc_intopic, max_no_topic, data_df, inp_list, dictionary2, ldamodel):
+    def num_doc_topic(num_doc, data_df, inp_list, dictionary2, ldamodel, max_no_topic):
 
-        doc_dist_dict = {}
+        n_doc_in_topic = []
+
+        topic_doc_dist_dict = {}
         for i in range(max_no_topic):
-            doc_dist_dict[i] = 0
-        print(doc_dist_dict)
-        for i in range(max_no_topic):
+            topic_doc_dist_dict[i] = 0
+        # print(topic_doc_dist_dict)
+
+        for i in range(num_doc):
             doc_id = data_df['doc_id'][i]
             title = data_df['title'][i]
             content = inp_list[i]
-            doc_dist_dict = TextDistribution.document_dist_min(doc_id, title, content,doc_dist_dict, dictionary2, ldamodel)
+            topic_doc_dist_dict = TextDistribution.document_dist_min(doc_id, title, content, topic_doc_dist_dict, dictionary2, ldamodel)
 
-        print(doc_dist_dict)
-        for i in doc_dist_dict:
-            ndoc_dict = {'topic_no':i+1, 'n_doc':doc_dist_dict[i]}
-            n_doc_intopic.append(ndoc_dict)
+        # print(topic_doc_dist_dict)
+        for i in topic_doc_dist_dict:
+            ndoc_dict = {'topic_no':i+1, 'n_doc':topic_doc_dist_dict[i]}
+            n_doc_in_topic.append(ndoc_dict)
 
-        return n_doc_intopic
+        # print(n_doc_in_topic)
+        # print("************************************************")
+        return n_doc_in_topic
 
 
     """
@@ -442,6 +451,6 @@ class TextDistribution:
             sorted_term_pairs[counter] = term_pair
             counter += 1
 
-        print(sorted_term_pairs)
+        # print(sorted_term_pairs)
 
         return sorted_term_pairs

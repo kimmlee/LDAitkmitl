@@ -125,7 +125,8 @@ def get_status_message(status_code):
 
         '510': "input dataset failed on document {}",
         "601": "both the number of input files and the number of titles are zero",
-        "602": "the number of input files is not equal to the number of titles"
+        "602": "the number of input files is not equal to the number of titles",
+        "603": "some files are unreadable or duplicate, please check their list in unreadable_documents"
     }
 
     return statuses.get(str(status_code), "Unknown Error")
