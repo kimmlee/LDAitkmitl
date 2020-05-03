@@ -364,7 +364,7 @@ class LDAModeling:
         send_progress(id=id, code="170", keep=True)
 
         # pyLDAvis.enable_notebook()
-        vis = pyLDAvis.gensim.prepare(ldamodel, corpus2, dictionary=ldamodel.id2word)
+        vis = pyLDAvis.gensim.prepare(ldamodel, corpus2, dictionary=ldamodel.id2word, sort_topics=False)
         pyLDAvis.save_html(vis, output_dir + pyLDAvis_output_file)
 
         print("========== PART 7 : Convert pyLDAvis HTML to Thai==========")
