@@ -105,7 +105,7 @@ class TextPreProcessing:
         count = 0
         for i in new_lists:
             count += len(i)
-        print("The number of Unique words left after filtering out: ".format(count))
+        print("The number of Unique words left after filtering out: {0}".format(count))
         return new_lists
 
     @staticmethod
