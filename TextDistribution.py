@@ -203,7 +203,7 @@ class TextDistribution:
         return topic_term_dist  
 
     @staticmethod
-    def document_dist(doc_id, title, text, id_ ,dictionary2,ldamodel,doc_topic_dist):
+    def document_dist(doc_id, title, text, id_ ,dictionary2, ldamodel, doc_topic_dist):
         bow = dictionary2.doc2bow(text)
         doc_dist = ldamodel.get_document_topics(bow, minimum_probability=0, minimum_phi_value=None,per_word_topics=False)
         print(doc_id, title)
@@ -221,7 +221,7 @@ class TextDistribution:
         return doc_topic_dist
 
     @staticmethod
-    def docTopic_dist(doc_topic_dist,data_df, max_no_topic, inp_list,dictionary2,ldamodel):
+    def docTopic_dist(doc_topic_dist,data_df, num_doc, inp_list,dictionary2, ldamodel, max_no_topic = 10):
         """
         Document-Topic Distribution is a probability score of document in topic.
         This method is called document_dist() which 
@@ -236,11 +236,11 @@ class TextDistribution:
         doc_topic_dist: a list of 
 
         """
-        for i in range(max_no_topic):
+        for i in range(num_doc):
             doc_id = data_df['doc_id'][i]
             title = data_df['title'][i]
             content = inp_list[i]
-            doc_topic_dist = TextDistribution.document_dist(doc_id, title, content, i,dictionary2,ldamodel,doc_topic_dist)
+            doc_topic_dist = TextDistribution.document_dist(doc_id, title, content, i, dictionary2,ldamodel, doc_topic_dist)
         return doc_topic_dist
 
     @staticmethod
@@ -264,17 +264,17 @@ class TextDistribution:
         return doc_dist_dict
 
     @staticmethod
-    def num_doc_topic(n_doc_intopic, max_no_topic, data_df, inp_list, dictionary2, ldamodel):
+    def num_doc_topic(n_doc_intopic, num_doc, data_df, inp_list, dictionary2, ldamodel, max_no_topic = 10):
 
         doc_dist_dict = {}
-        for i in range(max_no_topic):
+        for i in range(num_doc):
             doc_dist_dict[i] = 0
         print(doc_dist_dict)
-        for i in range(max_no_topic):
+        for i in range(num_doc):
             doc_id = data_df['doc_id'][i]
             title = data_df['title'][i]
             content = inp_list[i]
-            doc_dist_dict = TextDistribution.document_dist_min(doc_id, title, content,doc_dist_dict, dictionary2, ldamodel)
+            doc_dist_dict = TextDistribution.document_dist_min(doc_id, title, content, doc_dist_dict, dictionary2, ldamodel)
 
         print(doc_dist_dict)
         for i in doc_dist_dict:
