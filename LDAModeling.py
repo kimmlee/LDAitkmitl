@@ -47,7 +47,7 @@ class LDAModeling:
         self.longest_num_cut = 100
         self.no_top_terms = 20
         self.max_returned_term_pairs = 100
-        self.sort_topics = False
+        self.sort_topics = True
 
     def to_dataframe(self, data, titles, doc_path_file):
         """
@@ -331,20 +331,18 @@ class LDAModeling:
 
         print("========== PART 4 : Topic-term distribution ==========")
         ### Topic-Term Dist
-        topic_term_dist = []
-        # print(dictionary2['ทุจริต'])
-        # print(dictionary2)
-        topic_term_dist = TextDistribution.topicTerm_dist(ldamodel, corpus2, sort_topics=self.sort_topics)
+        topic_term_dist, topic_list = TextDistribution.topicTerm_dist(ldamodel, corpus2, sort_topics=self.sort_topics)
         # print(topic_term_dist)
+        # print("Topic list: {0}".format(topic_list))
 
         print("========== PART 4-1 : Document-topic (all) distribution ==========")
         ### Doc_topic_all_dist
-        doc_topic_dist = TextDistribution.docTopic_dist(data_df, num_doc, inp_list, dictionary2, ldamodel)
+        doc_topic_dist = TextDistribution.docTopic_dist(data_df, num_doc, inp_list, dictionary2, ldamodel, topic_list)
         # print(doc_topic_dist)
 
         print("========== PART 4-2 : Document-topic (min) distribution ==========")
         ### Doc_topic_min_dist
-        n_doc_in_topic = TextDistribution.num_doc_topic(num_doc, data_df, inp_list, dictionary2, ldamodel, max_no_topic)
+        n_doc_in_topic = TextDistribution.num_doc_topic(num_doc, data_df, inp_list, dictionary2, ldamodel, max_no_topic, topic_list)
         # print(n_doc_intopic)
 
         # print("========== PART 5 : Evaluate Model ==========")
