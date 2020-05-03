@@ -92,7 +92,7 @@ class TextPreProcessing:
         count = 0
         for i in inp_list:
             count += len(i)
-        print(count)
+        # print(count)
 
         new_lists = []
         for i in range(len(inp_list)):
@@ -105,7 +105,7 @@ class TextPreProcessing:
         count = 0
         for i in new_lists:
             count += len(i)
-        print(count)
+        print("The number of Unique words left after filtering out: ".format(count))
         return new_lists
 
     @staticmethod
@@ -167,7 +167,7 @@ class TextPreProcessing:
             title = data_df['title'][num]
             title_list.append(TextPreProcessing.split_word(title))
 
-        print(title_list)
+        # print(title_list)
 
         # Add title of dict_2 index in index list
         title_index = []
@@ -180,7 +180,7 @@ class TextPreProcessing:
         #                 print(header_list[i][j], dict_2[header_list[i][j]])
             title_index.append(index_list)
 
-        print(title_index)
+        # print(title_index)
 
         # Plus frequency in corpus tuple by searching index of dict
         for i in range(num_doc):

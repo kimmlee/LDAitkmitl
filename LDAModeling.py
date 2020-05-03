@@ -262,7 +262,7 @@ class LDAModeling:
             result = {
                 "project_id":None,
                 "success":False,
-                "errorMessage":'Some files are unreadable, please check their list in unreadable_documents.',
+                "errorMessage":'Some files are unreadable or duplicate, please check their list in unreadable_documents.',
                 "topic_chart_url": None,
                 "term_topic_matrix":None,
                 "document_topic_matrix":None,
@@ -335,21 +335,15 @@ class LDAModeling:
         # print(dictionary2)
         topic_term_dist = TextDistribution.topicTerm_dist(ldamodel, corpus2)
         # print(topic_term_dist)
-        handle1=open('topic_term_dist_6','a+')
-        handle1.write(str(topic_term_dist))
-        handle1.write("\n")
-        handle1.close()
 
         print("========== PART 4-1 : Document-topic (all) distribution ==========")
         ### Doc_topic_all_dist
-        doc_topic_dist = []
-        doc_topic_dist = TextDistribution.docTopic_dist(doc_topic_dist, data_df, num_doc, inp_list, dictionary2, ldamodel, max_no_topic)
+        doc_topic_dist = TextDistribution.docTopic_dist(data_df, num_doc, inp_list, dictionary2, ldamodel)
         # print(doc_topic_dist)
 
         print("========== PART 4-2 : Document-topic (min) distribution ==========")
         ### Doc_topic_min_dist
-        n_doc_intopic = []
-        n_doc_intopic = TextDistribution.num_doc_topic(n_doc_intopic, num_doc, data_df, inp_list, dictionary2, ldamodel, max_no_topic)
+        n_doc_in_topic = TextDistribution.num_doc_topic(num_doc, data_df, inp_list, dictionary2, ldamodel, max_no_topic)
         # print(n_doc_intopic)
 
         # print("========== PART 5 : Evaluate Model ==========")
@@ -381,7 +375,7 @@ class LDAModeling:
             "topic_chart_url": output_dir + pyLDAvis_output_file,
             "term_topic_matrix":topic_term_dist,
             "document_topic_matrix":doc_topic_dist,
-            "topic_stat":n_doc_intopic,
+            "topic_stat":n_doc_in_topic,
             "term_pairs":terms_pairs,
             "unreadable_documents":unreadable_docs
         }
