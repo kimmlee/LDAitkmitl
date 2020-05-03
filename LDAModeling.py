@@ -48,6 +48,7 @@ class LDAModeling:
         self.longest_num_cut = 100
         self.no_top_terms = 20
         self.max_returned_term_pairs = 100
+        self.sort_topics = False
 
     def to_dataframe(self, data, titles, doc_path_file):
         """
@@ -329,7 +330,7 @@ class LDAModeling:
         topic_term_dist = []
         # print(dictionary2['ทุจริต'])
         # print(dictionary2)
-        topic_term_dist = TextDistribution.topicTerm_dist(ldamodel, corpus2)
+        topic_term_dist = TextDistribution.topicTerm_dist(ldamodel, corpus2, sort_topics=self.sort_topics)
         # print(topic_term_dist)
 
         print("========== PART 4-1 : Document-topic (all) distribution ==========")
@@ -358,7 +359,7 @@ class LDAModeling:
         send_progress(id=id, code="170", keep=True)
 
         # pyLDAvis.enable_notebook()
-        vis = pyLDAvis.gensim.prepare(ldamodel, corpus2, dictionary=ldamodel.id2word, sort_topics=False)
+        vis = pyLDAvis.gensim.prepare(ldamodel, corpus2, dictionary=ldamodel.id2word, sort_topics=self.sort_topics)
         pyLDAvis.save_html(vis, output_dir + pyLDAvis_output_file)
 
         print("========== PART 7 : Convert pyLDAvis HTML to Thai==========")

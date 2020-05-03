@@ -32,7 +32,7 @@ class TextDistribution:
     """
 
     @staticmethod
-    def topicTerm_dist(ldamodel, corpus):
+    def topicTerm_dist(ldamodel, corpus, sort_topics=True):
         """
         Topic-Term Distribution is a probability score of word in topic which display on pyLDAvis output.
         This method is called 4 methods in class for calculating the probability that extend from pyLDAvis method, including:
@@ -69,12 +69,20 @@ class TextDistribution:
         doc_lengths      = TextDistribution._series_with_name(extract_data['doc_lengths'], 'doc_length')
         vocab            = TextDistribution._series_with_name(extract_data['vocab'], 'vocab')
         topic_freq       = (doc_topic_dists.T * doc_lengths).T.sum()
-        topic_proportion = (topic_freq / topic_freq.sum()).sort_values(ascending=False)
-        topic_list = list(topic_proportion.index)
+
+        # ****** Do not sort topics, use topic ids as they are ********
+        topic_list = list(range(0, len(topic_freq)))
+        if sort_topics:
+            # ****** Sort topics according to topic_proportion********
+            topic_proportion = (topic_freq / topic_freq.sum()).sort_values(ascending=False)
+            topic_list = list(topic_proportion.index)
+
+        #print("Topic list: {0}".format(topic_list))
+
         term_proportion = term_frequency / term_frequency.sum()
         log_lift = np.log(topic_term_dists / term_proportion)
         log_ttd = np.log(topic_term_dists)
-        topic_term_dist = TextDistribution._find_relevance(topic_list, vocab,log_ttd, log_lift, 1000, lambda_=0.6)
+        topic_term_dist = TextDistribution._find_relevance(topic_list, vocab, log_ttd, log_lift, 1000, lambda_=0.6)
          
         return topic_term_dist
     
